@@ -1,0 +1,26 @@
+.prediction {
+  margin-left: 0.5em;
+  border: 1px solid #333333;
+  border-radius: 4px;
+  background-color: #eeeeee;
+  padding: 0.25em 0.5em;
+  cursor: pointer;
+  outline: none;
+
+  &:hover {
+    background-color: #cccccc;
+  }
+
+  &:active {
+    background-color: #aaaaaa;
+  }
+
+  &:focus {
+    border-color: #000000;
+    outline: 1px solid #000000;
+  }
+
+  &.active {
+    background-color: #bbbbbb;
+  }
+}

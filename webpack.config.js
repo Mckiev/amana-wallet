@@ -2,7 +2,7 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-// const CopyPlugin = require('copy-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = () => {
   const isProduction = process.env.NODE_ENV === 'production';
@@ -55,14 +55,17 @@ module.exports = () => {
       new MiniCssExtractPlugin({
         filename: 'styles.css',
       }),
-      // new CopyPlugin({
-      //   patterns: [
-      //     {
-      //       from: 'src/client/static',
-      //     },
-      //   ],
-      // }),
-      new HtmlWebpackPlugin(),
+      new CopyPlugin({
+        patterns: [
+          {
+            from: 'node_modules/react-toastify/dist/ReactToastify.css',
+            to: 'ReactToastify.css',
+          },
+        ],
+      }),
+      new HtmlWebpackPlugin({
+        template: 'src/index.html'
+      }),
     ],
     devServer: {
       static: {
