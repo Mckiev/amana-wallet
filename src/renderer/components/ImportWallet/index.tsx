@@ -1,7 +1,6 @@
 import type { ChangeEvent, FunctionComponent } from 'react';
 import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { createPrimaryAddress } from '../../railgun/utils';
 import { AccountActions } from '../../redux/slices/account';
 import styles from './index.scss';
 
@@ -13,7 +12,7 @@ const ImportWallet: FunctionComponent = () => {
     setMnemonic(e.target.value);
   }, []);
   const onClick = useCallback(async() => {
-    const primaryAddress = await createPrimaryAddress(mnemonic);
+    const primaryAddress = await '0zkabcdef123456'; // TODO
     dispatch(AccountActions.importAccount({
       mnemonic,
       primaryAddress,

@@ -1,11 +1,10 @@
 import type { FunctionComponent } from 'react';
-import React, { ChangeEvent, useCallback, useState } from 'react';
-import { generateMnemonic } from 'bip39';
+import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { createPrimaryAddress } from '../../railgun/utils';
-import { AccountActions } from '../../redux/slices/account';
-import styles from './index.scss';
 import { toast } from 'react-toastify';
+import { AccountActions } from '../../redux/slices/account';
+import generateMnemonic from '../../requests/generateMnemonic';
+import styles from './index.scss';
 
 enum Step {
   Generate = 'Generate',
@@ -26,7 +25,7 @@ const GenerateWallet: FunctionComponent = () => {
   const buttonText = getButtonText(step);
   const onClick = useCallback(async() => {
     if (step === Step.Generate) {
-      setMnemonic(generateMnemonic(128));
+      setMnemonic(await generateMnemonic());
       setStep(Step.Copy);
       return;
     }
@@ -38,7 +37,7 @@ const GenerateWallet: FunctionComponent = () => {
       toast('Mnemonic copied to clipboard');
       setStep(Step.Import);
     } else {
-      const primaryAddress = await createPrimaryAddress(mnemonic);
+      const primaryAddress = '0zkabcdef123456'; // TODO: await createPrimaryAddress(mnemonic);
       dispatch(AccountActions.importAccount({
         mnemonic,
         primaryAddress,
