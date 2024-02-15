@@ -3,8 +3,8 @@ import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { AccountActions } from '../../redux/slices/account';
-import generateMnemonic from '../../requests/generateMnemonic';
 import styles from './index.scss';
+import IpcRequest from '../../IpcRequest';
 
 enum Step {
   Generate = 'Generate',
@@ -25,7 +25,8 @@ const GenerateWallet: FunctionComponent = () => {
   const buttonText = getButtonText(step);
   const onClick = useCallback(async() => {
     if (step === Step.Generate) {
-      setMnemonic(await generateMnemonic());
+      const generatedMnemonic = await IpcRequest.Mnemonic();
+      setMnemonic(generatedMnemonic);
       setStep(Step.Copy);
       return;
     }
