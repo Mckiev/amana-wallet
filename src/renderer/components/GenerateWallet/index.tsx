@@ -38,7 +38,7 @@ const GenerateWallet: FunctionComponent = () => {
       toast('Mnemonic copied to clipboard');
       setStep(Step.Import);
     } else {
-      const primaryAddress = '0zkabcdef123456'; // TODO: await createPrimaryAddress(mnemonic);
+      const primaryAddress: string = await IpcRequest.RailgunAddress(mnemonic);
       dispatch(AccountActions.importAccount({
         mnemonic,
         primaryAddress,

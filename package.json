@@ -4,8 +4,9 @@
   "description": "The front-end wallet for AMANA",
   "main": "index.js",
   "scripts": {
-    "build": "webpack",
-    "start": "electron dist/index.js",
+    "rebuild": "electron-rebuild -o leveldown",
+    "build": "rm -rf dist && webpack",
+    "start": "NODE_OPTIONS=--no-experimental-fetch electron dist/index.js",
     "dev": "webpack serve",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix"
@@ -20,18 +21,23 @@
     "buffer": "6.0.3",
     "classnames": "2.5.1",
     "eleventh": "1.1.0",
+    "level": "8.0.1",
+    "leveldown": "6.1.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-icons": "5.0.1",
     "react-redux": "9.1.0",
-    "react-toastify": "10.0.4"
+    "react-toastify": "10.0.4",
+    "snarkjs": "0.7.3"
   },
   "devDependencies": {
+    "@electron/rebuild": "3.6.0",
+    "@types/leveldown": "4.0.6",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
+    "@types/snarkjs": "0.7.8",
     "@typescript-eslint/eslint-plugin": "6.20.0",
     "@typescript-eslint/parser": "6.20.0",
-    "clean-webpack-plugin": "4.0.0",
     "copy-webpack-plugin": "12.0.2",
     "css-loader": "6.9.1",
     "electron": "28.2.2",
@@ -48,6 +54,7 @@
     "ts-loader": "9.5.1",
     "typescript": "5.3.3",
     "webpack": "5.90.0",
-    "webpack-cli": "5.1.4"
+    "webpack-cli": "5.1.4",
+    "webpack-node-externals": "3.0.0"
   }
 }

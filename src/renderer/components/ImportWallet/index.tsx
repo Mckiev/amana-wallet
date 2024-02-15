@@ -3,6 +3,7 @@ import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AccountActions } from '../../redux/slices/account';
 import styles from './index.scss';
+import IpcRequest from '../../IpcRequest';
 
 const ImportWallet: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -12,7 +13,7 @@ const ImportWallet: FunctionComponent = () => {
     setMnemonic(e.target.value);
   }, []);
   const onClick = useCallback(async() => {
-    const primaryAddress = await '0zkabcdef123456'; // TODO
+    const primaryAddress: string = await IpcRequest.RailgunAddress(mnemonic);
     dispatch(AccountActions.importAccount({
       mnemonic,
       primaryAddress,

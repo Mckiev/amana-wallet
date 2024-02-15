@@ -1,5 +1,5 @@
 const path = require('path');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = () => {
   const isProduction = process.env.NODE_ENV === 'production';
@@ -16,8 +16,12 @@ module.exports = () => {
     },
     target: 'electron-main',
     resolve: {
-      extensions: ['.tsx', '.ts', '.js'],
+      extensions: ['.ts', '.js'],
     },
+    node: {
+      __dirname: true,
+    },
+    externals: [nodeExternals()],
     module: {
       rules: [
         {
@@ -27,8 +31,5 @@ module.exports = () => {
         },
       ],
     },
-    plugins: [
-      new CleanWebpackPlugin(),
-    ],
   };
 };

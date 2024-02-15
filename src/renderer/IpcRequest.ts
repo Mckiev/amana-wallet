@@ -10,7 +10,7 @@ const IpcRequest: IpcRequests = {
     return mnemonic;
   },
   [IpcChannel.RailgunAddress]: async (mnemonic: string): Promise<string> => {
-    const railgunAddress = await ipcRenderer.invoke(IpcChannel.RailgunAddress, mnemonic);
+    const railgunAddress: string = await ipcRenderer.invoke(IpcChannel.RailgunAddress, mnemonic);
     return railgunAddress;
   },
 };

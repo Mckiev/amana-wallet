@@ -1,8 +1,9 @@
 import { ipcMain } from 'electron';
 import { generateMnemonic } from 'bip39';
 import { IpcChannel } from '../common/ipcChannels';
+import Railgun from './railgun';
 
-type IpcHandler = (...parameters: unknown[]) => unknown;
+type IpcHandler = (...parameters: any[]) => unknown;
 type IpcHandlers = Record<IpcChannel, IpcHandler>;
 
 const requests: IpcHandlers = {
@@ -10,15 +11,18 @@ const requests: IpcHandlers = {
     const mnemonic = generateMnemonic(128);
     return mnemonic;
   },
-  [IpcChannel.RailgunAddress]: () => {
-    return '0zkabcdef123456789';
+  [IpcChannel.RailgunAddress]: async (mnemonic: string) => {
+    const wallet = await Railgun.getWallet(mnemonic);
+    return wallet.getAddress();
   },
 };
 
 const initialize = () => {
   Object.entries(requests)
     .forEach(([channelName, channelHandler]) => {
-      ipcMain.handle(channelName, channelHandler);
+      ipcMain.handle(channelName, (event, ...parameters) => (
+        channelHandler(...parameters)
+      ));
     });
 };
 

@@ -1,6 +1,8 @@
 import { app, BrowserWindow } from 'electron';
 import path from 'node:path';
 
+app.commandLine.appendSwitch('no-experimental-fetch');
+
 const initialize = () => {
   const createWindow = () => {
     const mainWindow = new BrowserWindow({
