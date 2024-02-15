@@ -17,6 +17,11 @@ export const getPrimaryAddress = createSelector(
   account => account.primaryAddress,
 );
 
+export const getBalance = createSelector(
+  getAccount,
+  account => account.balance,
+);
+
 export const getShortPrimaryAddress = createSelector(
   getPrimaryAddress,
   primaryAddress => primaryAddress === undefined

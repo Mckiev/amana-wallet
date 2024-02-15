@@ -24,6 +24,11 @@ const initialize = () => {
         channelHandler(...parameters)
       ));
     });
+
+  Railgun.events.on('balance', (balance: bigint) => {
+    console.log('balance event emitted', balance);
+    ipcMain.emit('Balance', balance);
+  });
 };
 
 export default {

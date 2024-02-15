@@ -1,5 +1,7 @@
 import { ipcRenderer } from 'electron';
 import { IpcChannel } from '../common/ipcChannels';
+import store from './redux/store';
+import { AccountActions } from './redux/slices/account';
 
 type IpcRequest = (...parameters: any[]) => Promise<any>;
 type IpcRequests = Record<IpcChannel, IpcRequest>;
@@ -14,5 +16,13 @@ const IpcRequest: IpcRequests = {
     return railgunAddress;
   },
 };
+
+ipcRenderer.on('Balance', (event, balance: bigint) => {
+  console.log('BALANCE RECEIVED:');
+  console.log(typeof balance);
+  console.log(balance);
+  const action = AccountActions.updateBalance(balance);
+  store.dispatch(action);
+})
 
 export default IpcRequest;

@@ -12,10 +12,17 @@ type MapType<T> = {
 };
 
 export const setEngineLoggers = () => {
-    const logMessage: Optional<(msg: unknown) => void> = console.log;
-    const logError: Optional<(err: unknown) => void> = console.error;
-    
-    setLoggers(logMessage, logError);
+    // const logMessage: Optional<(msg: unknown) => void> = console.log;
+    // const logError: Optional<(err: unknown) => void> = console.error;
+    setLoggers(
+      (message: unknown) => {
+        console.log('received a message log from railgun engine');
+        console.log(message);
+      }, 
+      (message: unknown) => {
+        console.log('received an error log from railgun engine');
+        console.log(message);
+      });
   }
   
 export  const initializeEngine = async (): Promise<void> => {
