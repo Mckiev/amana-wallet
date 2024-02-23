@@ -15,7 +15,7 @@ export type WithdrawalState = {
 const initialState: WithdrawalState = {
   status: WithdrawalStatus.None,
   manifoldUser: '',
-  amount: '',
+  amount: '0',
 };
 
 type UpdateManifolduser = PayloadAction<string>;
@@ -36,7 +36,7 @@ const withdrawalSlice = createSlice({
     },
     confirmWithdrawal: (state) => {
       state.status = WithdrawalStatus.None;
-      state.amount = '';
+      state.amount = '0';
     },
     cancelWithdrawal: (state) => {
       state.status = WithdrawalStatus.None;

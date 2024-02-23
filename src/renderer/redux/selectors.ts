@@ -64,5 +64,5 @@ export const getWithdrawalManifoldUser = createSelector(
 
 export const getWithdrawalAmount = createSelector(
   getWithdrawal,
-  withdrawal => withdrawal.amount,
+  withdrawal => BigInt(withdrawal.amount),
 );

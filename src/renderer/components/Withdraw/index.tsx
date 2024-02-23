@@ -43,7 +43,7 @@ const Withdraw: FunctionComponent = () => {
       <input
         type="number"
         name="withdrawalAmount"
-        value={amount}
+        value={amount.toString()}
         onChange={onChangeWithdrawalAmount}
       />
       <button type="button" onClick={onClick}>Withdraw</button>

@@ -6,6 +6,7 @@ import type { AbstractWallet } from '@railgun-community/engine';
 import config from '../../common/config';
 import constants from '../../common/constants';
 import { setEngineLoggers, initializeEngine, creationBlockNumberMap, loadEngineProvider } from './engine';
+import { sendTransfer } from './self-transfer';
 
 export { sendTransfer } from './self-transfer';
 export const { chain } = NETWORK_CONFIG[NetworkName.Polygon];
@@ -49,8 +50,20 @@ const initialize = async() => {
   setOnBalanceUpdateCallback(onBalanceUpdateCallback);
 };
 
+const withdraw = async(
+  mnemonic: string,
+  amount: bigint,
+  manifoldUser: string,
+): Promise<void> => {
+  const wallet = await getWallet(mnemonic);
+  const to = constants.RAILGUN.BOT_ADDRESS;
+  const memoText = `withdraw:${manifoldUser}`;
+  await sendTransfer(wallet.id, to, memoText, amount);
+};
+
 export default {
   initialize,
   getWallet,
   events,
+  withdraw,
 };

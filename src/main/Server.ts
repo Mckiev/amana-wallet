@@ -16,6 +16,13 @@ const requests: IpcHandlers = {
     const wallet = await Railgun.getWallet(mnemonic);
     return wallet.getAddress();
   },
+  [IpcChannel.Withdraw]: async(
+    mnemonic: string,
+    amount: bigint,
+    manifoldUser: string,
+  ) => {
+    await Railgun.withdraw(mnemonic, amount, manifoldUser);
+  },
 };
 
 const initialize = () => {

@@ -9,11 +9,12 @@ import {
   gasEstimateForUnprovenTransfer,
   generateTransferProof,
   populateProvedTransfer,
+  refreshBalances,
 } from '@railgun-community/wallet';
 import { TransactionResponse, parseUnits } from 'ethers';
 import config from '../../common/config';
 import constants from '../../common/constants';
-import * as Railgun from '.';
+import { chain } from '.';
 
 export async function sendTransfer(
   fromWalletId: string,
@@ -30,7 +31,9 @@ export async function sendTransfer(
     },
   ];
 
-  const sendWithPublicWallet = true; // False if sending with Relayer. True if self-signing with public wallet. See "UX: Private Transactions".
+  // False if sending with Relayer.
+  // True if self-signing with public wallet. See "UX: Private Transactions".
+  const sendWithPublicWallet = true;
 
   const originalGasEstimate = 0n; // Always 0, we don't have this yet.
 
@@ -46,7 +49,7 @@ export async function sendTransfer(
   };
 
   // Need to refresh balances, or wallet may try to spend already spent UTXOs.
-  // await Railgun.refreshBalances(Railgun.chain, undefined);
+  await refreshBalances(chain, undefined);
 
   const { gasEstimate } = await gasEstimateForUnprovenTransfer(
     TXIDVersion.V2_PoseidonMerkle,
@@ -68,13 +71,12 @@ export async function sendTransfer(
     maxPriorityFeePerGas,
   };
 
-  const progressCallback = (progress: number) => {
+  const progressCallback = (progress: number): void => {
     console.log(`Transfer proof progress: ${progress}`);
-    // Handle proof progress (show in UI).
-    // Proofs can take 20-30 seconds on slower devices.
   };
 
-  const showSenderAddressToRecipient: boolean = false; // Allow recipient to see RAILGUN address of sender
+  // Allow recipient to see RAILGUN address of sender
+  const showSenderAddressToRecipient: boolean = false;
 
   await generateTransferProof(
     TXIDVersion.V2_PoseidonMerkle,
@@ -105,7 +107,28 @@ export async function sendTransfer(
     transactionGasDetails,
   );
 
-  const transaction_to_send = populateResponse.transaction;
+  console.log('transaction', populateResponse.transaction);
+
+  const { data, gasLimit } = populateResponse.transaction;
+
+  if (gasLimit === undefined) {
+    throw new Error('Unable to estimate gas limit');
+  }
+
+  const host = 'http://localhost:9000'; // TODO: use production host, use config
+
+  const endpoint = `${host}/send-transaction`;
+
+  await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      data,
+      gasLimit: gasLimit.toString(),
+    }),
+  });
 
   // const wallet_0x = Wallet.fromPhrase(config.mnemonic, new InfuraProvider(137));
   // transaction_to_send.from = wallet_0x.address;
