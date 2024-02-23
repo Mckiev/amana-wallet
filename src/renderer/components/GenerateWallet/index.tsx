@@ -3,14 +3,14 @@ import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { toast } from 'react-toastify';
 import { AccountActions } from '../../redux/slices/account';
-import styles from './index.scss';
 import IpcRequest from '../../IpcRequest';
+import styles from './index.scss';
 
 enum Step {
   Generate = 'Generate',
   Copy = 'Copy',
   Import = 'Import',
-};
+}
 
 const getButtonText = (step: Step): string => ({
   [Step.Generate]: 'Generate Mnemonic',
@@ -38,6 +38,7 @@ const GenerateWallet: FunctionComponent = () => {
       toast('Mnemonic copied to clipboard');
       setStep(Step.Import);
     } else {
+      dispatch(AccountActions.beginImporting());
       const primaryAddress: string = await IpcRequest.RailgunAddress(mnemonic);
       dispatch(AccountActions.importAccount({
         mnemonic,

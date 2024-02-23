@@ -4,13 +4,15 @@ import { createSlice } from '@reduxjs/toolkit';
 export type AccountState = {
   mnemonic?: string;
   primaryAddress?: string;
-  balance: bigint;
+  balance: string;
+  isImporting: boolean;
 };
 
 const initialState: AccountState = {
   mnemonic: undefined,
   primaryAddress: undefined,
-  balance: 0n,
+  balance: '0',
+  isImporting: false,
 };
 
 type ImportAccountAction = PayloadAction<{
@@ -18,16 +20,20 @@ type ImportAccountAction = PayloadAction<{
   primaryAddress: string;
 }>;
 
-type UpdateBalanceAction = PayloadAction<bigint>;
+type UpdateBalanceAction = PayloadAction<string>;
 
 const accountSlice = createSlice({
   name: 'account',
   initialState,
   reducers: {
+    beginImporting: (state) => {
+      state.isImporting = true;
+    },
     importAccount: (state, action: ImportAccountAction) => {
       const { mnemonic, primaryAddress } = action.payload;
       state.mnemonic = mnemonic;
       state.primaryAddress = primaryAddress;
+      state.isImporting = false;
     },
     updateBalance: (state, action: UpdateBalanceAction) => {
       state.balance = action.payload;
@@ -35,6 +41,6 @@ const accountSlice = createSlice({
   },
 });
 
-export const AccountActions = accountSlice.actions; 
+export const AccountActions = accountSlice.actions;
 
 export default accountSlice.reducer;

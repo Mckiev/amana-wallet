@@ -3,18 +3,24 @@ import path from 'node:path';
 
 app.commandLine.appendSwitch('no-experimental-fetch');
 
+let mainWindow: BrowserWindow | undefined = undefined;
+
+const getMainWindow = (): BrowserWindow | undefined => {
+  return mainWindow;
+};
+
 const initialize = () => {
   const createWindow = () => {
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
       width: 1200,
       height: 1000,
       webPreferences: {
-        preload: path.join(__dirname, 'renderer/preload.js'),
+        // preload: path.join(__dirname, 'renderer/preload.js'),
         nodeIntegration: true,
         contextIsolation: false,
       },
     });
-    mainWindow.loadFile(path.join(__dirname, 'renderer/index.html'))
+    mainWindow.loadFile(path.join(__dirname, 'renderer/index.html'));
     // mainWindow.webContents.openDevTools()
   };
 
@@ -34,4 +40,5 @@ const initialize = () => {
 
 export default {
   initialize,
+  getMainWindow,
 };

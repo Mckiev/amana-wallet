@@ -2,8 +2,8 @@ import type { ChangeEvent, FunctionComponent } from 'react';
 import React, { useCallback, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { AccountActions } from '../../redux/slices/account';
-import styles from './index.scss';
 import IpcRequest from '../../IpcRequest';
+import styles from './index.scss';
 
 const ImportWallet: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -13,6 +13,7 @@ const ImportWallet: FunctionComponent = () => {
     setMnemonic(e.target.value);
   }, []);
   const onClick = useCallback(async() => {
+    dispatch(AccountActions.beginImporting());
     const primaryAddress: string = await IpcRequest.RailgunAddress(mnemonic);
     dispatch(AccountActions.importAccount({
       mnemonic,

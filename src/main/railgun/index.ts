@@ -27,8 +27,8 @@ const events = new EventEmitter();
 export const getWallet = async (mnemonic: string): Promise<AbstractWallet> => {
   const railgunWalletInfo = await createWallet(config.encryptionKey, mnemonic, creationBlockNumberMap);
   const wallet = walletForID(railgunWalletInfo.id);
+  await refreshBalances(chain, undefined);
   const tokenBalances = await wallet.getTokenBalances(TXIDVersion.V3_PoseidonMerkle, chain, true);
-  console.log('tokenBalances', tokenBalances);
   return wallet;
 };
 
@@ -42,18 +42,10 @@ const onBalanceUpdateCallback = ((event: RailgunBalancesEvent) => {
 });
 
 const initialize = async () => {
-  console.log('initializing engine');
   await initializeEngine();
-  console.log('initialized engine');
   await loadEngineProvider();
-  console.log('setting engine loggers');
   setEngineLoggers();
-  console.log('set engine loggers');
   setOnBalanceUpdateCallback(onBalanceUpdateCallback);
-
-  // await wallet.getTokenBalances(TXIDVersion.V2_PoseidonMerkle, chain, false); // onlySpendable
-  // await refreshBalances(chain, undefined);
-  // return wallet;
 };
 
 export default {

@@ -2,6 +2,7 @@ import { ipcMain } from 'electron';
 import { generateMnemonic } from 'bip39';
 import { IpcChannel } from '../common/ipcChannels';
 import Railgun from './railgun';
+import WindowManager from './WindowManager';
 
 type IpcHandler = (...parameters: any[]) => unknown;
 type IpcHandlers = Record<IpcChannel, IpcHandler>;
@@ -27,7 +28,8 @@ const initialize = () => {
 
   Railgun.events.on('balance', (balance: bigint) => {
     console.log('balance event emitted', balance);
-    ipcMain.emit('Balance', balance);
+    const mainWindow = WindowManager.getMainWindow();
+    mainWindow?.webContents.send('Balance', balance);
   });
 };
 

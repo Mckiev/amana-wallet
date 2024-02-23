@@ -1,10 +1,15 @@
 import { createSelector } from '@reduxjs/toolkit';
+import type { Position } from '../types';
 import type { State } from './store';
 import type { AccountState } from './slices/account';
-import { Position } from '../types';
 
 const getAccount = (state: State): AccountState => (
   state.account
+);
+
+export const getIsImporting = createSelector(
+  getAccount,
+  account => account.isImporting,
 );
 
 export const getMnemonic = createSelector(
@@ -19,14 +24,14 @@ export const getPrimaryAddress = createSelector(
 
 export const getBalance = createSelector(
   getAccount,
-  account => account.balance,
+  account => BigInt(account.balance),
 );
 
 export const getShortPrimaryAddress = createSelector(
   getPrimaryAddress,
-  primaryAddress => primaryAddress === undefined
+  primaryAddress => (primaryAddress === undefined
     ? undefined
-    : `${primaryAddress.slice(0, 8)}...${primaryAddress.slice(primaryAddress.length - 5)}`,
+    : `${primaryAddress.slice(0, 8)}...${primaryAddress.slice(primaryAddress.length - 5)}`),
 );
 
 export const getIsLoggedIn = createSelector(

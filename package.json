@@ -6,7 +6,7 @@
   "scripts": {
     "rebuild": "electron-rebuild -o leveldown",
     "build": "rm -rf dist && webpack",
-    "start": "NODE_OPTIONS=--no-experimental-fetch electron dist/index.js",
+    "start": "electron dist/index.js",
     "dev": "webpack serve",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix"
@@ -20,6 +20,7 @@
     "bip39": "3.1.0",
     "buffer": "6.0.3",
     "classnames": "2.5.1",
+    "electron": "29.0.1",
     "eleventh": "1.1.0",
     "level": "8.0.1",
     "leveldown": "6.1.1",
@@ -40,7 +41,6 @@
     "@typescript-eslint/parser": "6.20.0",
     "copy-webpack-plugin": "12.0.2",
     "css-loader": "6.9.1",
-    "electron": "28.2.2",
     "eslint": "8.56.0",
     "eslint-config-principled": "1.1.1",
     "eslint-plugin-import": "2.29.1",
