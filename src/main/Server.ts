@@ -12,7 +12,7 @@ const requests: IpcHandlers = {
     const mnemonic = generateMnemonic(128);
     return mnemonic;
   },
-  [IpcChannel.RailgunAddress]: async (mnemonic: string) => {
+  [IpcChannel.RailgunAddress]: async(mnemonic: string) => {
     const wallet = await Railgun.getWallet(mnemonic);
     return wallet.getAddress();
   },

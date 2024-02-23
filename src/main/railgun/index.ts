@@ -1,13 +1,14 @@
 import EventEmitter from 'events';
-import { NETWORK_CONFIG, NetworkName, RailgunBalancesEvent, TXIDVersion } from '@railgun-community/shared-models';
-import { setEngineLoggers, initializeEngine, creationBlockNumberMap, loadEngineProvider} from './engine';
+import type { RailgunBalancesEvent } from '@railgun-community/shared-models';
+import { NETWORK_CONFIG, NetworkName, TXIDVersion } from '@railgun-community/shared-models';
 import { createRailgunWallet as createWallet, refreshBalances, setOnBalanceUpdateCallback, walletForID } from '@railgun-community/wallet';
-
-export {sendTransfer} from './self-transfer';
-export const {chain} = NETWORK_CONFIG[NetworkName.Polygon];
+import type { AbstractWallet } from '@railgun-community/engine';
 import config from '../../common/config';
-import { AbstractWallet } from '@railgun-community/engine';
 import constants from '../../common/constants';
+import { setEngineLoggers, initializeEngine, creationBlockNumberMap, loadEngineProvider } from './engine';
+
+export { sendTransfer } from './self-transfer';
+export const { chain } = NETWORK_CONFIG[NetworkName.Polygon];
 
 // const wallets: Record<string, AbstractWallet | undefined> = {};
 
@@ -24,7 +25,7 @@ import constants from '../../common/constants';
 
 const events = new EventEmitter();
 
-export const getWallet = async (mnemonic: string): Promise<AbstractWallet> => {
+export const getWallet = async(mnemonic: string): Promise<AbstractWallet> => {
   const railgunWalletInfo = await createWallet(config.encryptionKey, mnemonic, creationBlockNumberMap);
   const wallet = walletForID(railgunWalletInfo.id);
   await refreshBalances(chain, undefined);
@@ -41,7 +42,7 @@ const onBalanceUpdateCallback = ((event: RailgunBalancesEvent) => {
   events.emit('balance', amanaBalance);
 });
 
-const initialize = async () => {
+const initialize = async() => {
   await initializeEngine();
   await loadEngineProvider();
   setEngineLoggers();
@@ -52,4 +53,4 @@ export default {
   initialize,
   getWallet,
   events,
-}
+};

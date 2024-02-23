@@ -1,9 +1,9 @@
 import type { FunctionComponent } from 'react';
 import React from 'react';
-import Panel from '../Panel';
-import styles from './index.scss';
 import { useSelector } from 'react-redux';
+import Panel from '../Panel';
 import { getLogs } from '../../redux/selectors';
+import styles from './index.scss';
 
 const Logs: FunctionComponent = () => {
   const logs = useSelector(getLogs);

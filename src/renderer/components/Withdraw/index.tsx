@@ -11,7 +11,7 @@ enum Status {
 }
 
 const Withdraw: FunctionComponent = () => {
-  const [status, setStatus] = useState(Status.None)
+  const [status, setStatus] = useState(Status.None);
 
   const onClick = useCallback(() => {
     if (status === Status.None) {
@@ -27,9 +27,12 @@ const Withdraw: FunctionComponent = () => {
       <label htmlFor="withdrawalAmount">Withdrawal amount: </label>
       <input type="number" name="withdrawalAmount" />
       <button type="button" onClick={onClick}>Withdraw</button>
-      <p>Status: {status}</p>
+      <p>
+        Status:
+        {status}
+      </p>
     </Panel>
   );
-}
+};
 
 export default Withdraw;

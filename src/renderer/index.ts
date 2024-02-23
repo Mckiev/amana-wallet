@@ -3,7 +3,7 @@ import render from './render';
 
 Logger.setLogLevel(LogLevel.debug);
 
-const main = async () => {
+const main = async() => {
   render();
 };
 

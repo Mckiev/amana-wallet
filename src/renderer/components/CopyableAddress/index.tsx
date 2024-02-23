@@ -1,6 +1,7 @@
-import React, { FunctionComponent, useCallback } from 'react';
+import type { FunctionComponent } from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
-import { FaCopy } from "react-icons/fa";
+import { FaCopy } from 'react-icons/fa';
 import { toast } from 'react-toastify';
 import { getPrimaryAddress, getShortPrimaryAddress } from '../../redux/selectors';
 import styles from './index.scss';
@@ -21,7 +22,7 @@ const CopyableAddress: FunctionComponent = () => {
       {' '}
       {shortPrimaryAddress ?? '0zk...'}
     </span>
-  )
+  );
 };
 
 export default CopyableAddress;

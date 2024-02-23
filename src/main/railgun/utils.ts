@@ -1,10 +1,10 @@
-import {TransactionHistoryEntry, AbstractWallet} from '@railgun-community/engine';
+import { TransactionHistoryEntry, AbstractWallet } from '@railgun-community/engine';
 import { Chain } from '@railgun-community/shared-models';
 import { validateRailgunAddress } from '@railgun-community/wallet';
 
 export type TxHistoryInfo = {
-    length: number;
-    };
+  length: number;
+};
 
 // export const logTransactionDetails = (transactions: TransactionHistoryEntry[]): void => {
 //     // console.log('Logging transaction details...');
@@ -90,7 +90,7 @@ export type TxHistoryInfo = {
 //     //     ]
 //     //   }
 
-//     for (const tx of transactions) {  
+//     for (const tx of transactions) {
 //         try {
 //             console.log("Token Address:", tx.receiveTokenAmounts[0]?.tokenData.tokenAddress ?? '');
 //             console.log("Amount:", formatUnits(tx.receiveTokenAmounts[0]?.amount ?? 0n, 0));
@@ -101,7 +101,6 @@ export type TxHistoryInfo = {
 //         }
 //     }
 // }
-
 
 // export async function fetchTransactionHistory(wallet:AbstractWallet, chain: Chain, tx_info: TxHistoryInfo) {
 //     console.log('Fetching transaction history');
@@ -115,7 +114,7 @@ export type TxHistoryInfo = {
 //             logTransactionDetails(newTransactions);
 //             tx_info.length = currentTransactionHistory.length;
 //             return tx_info.length;
-  
+
 //         }
 //     } catch (error) {
 //         console.error('Error encountered:', error);
@@ -162,30 +161,30 @@ export type TxHistoryInfo = {
 // }
 
 export const extractZKaddress = (memo: string): string | undefined => {
-    const pattern = /0zk[a-zA-Z0-9]+/;
-    const match = memo.match(pattern);
-    if (match === null) {
-        return undefined;
-    }
-    if (match[0].length < 127) {
-        return undefined;
-    }
-    const zkAddress = match[0].substring(0, 127);
-    const isValid = validateRailgunAddress(zkAddress);
-    if (!isValid) {
-        return undefined;
-    }
-    return zkAddress;
+  const pattern = /0zk[a-zA-Z0-9]+/;
+  const match = pattern.exec(memo);
+  if (match === null) {
+    return undefined;
+  }
+  if (match[0].length < 127) {
+    return undefined;
+  }
+  const zkAddress = match[0].substring(0, 127);
+  const isValid = validateRailgunAddress(zkAddress);
+  if (!isValid) {
+    return undefined;
+  }
+  return zkAddress;
 };
 
 export type RailgunTransaction = {
-    txid: string;
-    amount: bigint;
-    memo: string;
-    tokenAddress: string;
-    recipientAddress: string;
-    timestamp: bigint;
-}
+  txid: string;
+  amount: bigint;
+  memo: string;
+  tokenAddress: string;
+  recipientAddress: string;
+  timestamp: bigint;
+};
 
 // export const onTransaction = (callback: RailgunTransactionCallback): void => {
 //     const handledTxIds: Record<string, true | undefined> = {};
@@ -203,7 +202,7 @@ export type RailgunTransaction = {
 //   };
 
 export function extractUsernameWithTrim(input: string): string {
-    // Assumes we are receiving a memo in format "withdraw:<manifoldUsername>"
-    const parts = input.split('withdraw:');
-    return parts.length > 1 ? parts[1].trim() : '';
-  }
+  // Assumes we are receiving a memo in format "withdraw:<manifoldUsername>"
+  const parts = input.split('withdraw:');
+  return parts.length > 1 ? parts[1].trim() : '';
+}

@@ -1,7 +1,7 @@
 import type { FunctionComponent } from 'react';
 import React from 'react';
-import Panel from '../Panel';
 import { useSelector } from 'react-redux';
+import Panel from '../Panel';
 import { getPositions } from '../../redux/selectors';
 import PositionDisplay from '../PositionDisplay';
 

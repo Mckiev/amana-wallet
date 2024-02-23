@@ -1,6 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import { Position, PositionStatus, Prediction } from '../../types';
+import type { Position } from '../../types';
+import { PositionStatus, Prediction } from '../../types';
 
 export type PositionsState = {
   positions: Position[];
@@ -26,7 +27,7 @@ const initialState: PositionsState = {
       prediction: Prediction.Yes,
       shares: 400,
       status: PositionStatus.Closed,
-    }
+    },
   ],
 };
 

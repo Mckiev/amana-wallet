@@ -15,7 +15,7 @@ enum Status {
 
 const Bet: FunctionComponent = () => {
   const [prediction, setPrediction] = useState(Prediction.Unselected);
-  const [status, setStatus] = useState(Status.None)
+  const [status, setStatus] = useState(Status.None);
 
   const onClickYes = useCallback(() => {
     setPrediction(Prediction.Yes);
@@ -40,7 +40,7 @@ const Bet: FunctionComponent = () => {
         <span
           onClick={onClickYes}
           className={classnames(styles.prediction, {
-            [styles.active]: prediction === Prediction.Yes
+            [styles.active]: prediction === Prediction.Yes,
           })}
         >
           Yes
@@ -48,7 +48,7 @@ const Bet: FunctionComponent = () => {
         <span
           onClick={onClickNo}
           className={classnames(styles.prediction, {
-            [styles.active]: prediction === Prediction.No
+            [styles.active]: prediction === Prediction.No,
           })}
         >
           No
@@ -57,7 +57,10 @@ const Bet: FunctionComponent = () => {
       <label htmlFor="betAmount">Bet amount: </label>
       <input type="number" name="betAmount" />
       <button type="button" onClick={onClick}>Place Bet</button>
-      <p>Status: {status}</p>
+      <p>
+        Status:
+        {status}
+      </p>
     </Panel>
   );
 };

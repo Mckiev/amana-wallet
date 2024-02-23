@@ -1,16 +1,12 @@
 import fs from 'fs';
 import { ArtifactStore } from '@railgun-community/wallet';
 
-const createDownloadDirPath = (documentsDir: string, path: string) => {
-  return `${documentsDir}/${path}`;
-};
+const createDownloadDirPath = (documentsDir: string, path: string) => `${documentsDir}/${path}`;
 
 export const createArtifactStore = (documentsDir: string): ArtifactStore => {
-  const getFile = async (path: string) => {
-    return fs.promises.readFile(createDownloadDirPath(documentsDir, path));
-  };
+  const getFile = async(path: string) => fs.promises.readFile(createDownloadDirPath(documentsDir, path));
 
-  const storeFile = async (
+  const storeFile = async(
     dir: string,
     path: string,
     item: string | Uint8Array,
@@ -24,14 +20,12 @@ export const createArtifactStore = (documentsDir: string): ArtifactStore => {
     );
   };
 
-  const fileExists = (path: string): Promise<boolean> => {
-    return new Promise(resolve => {
-      fs.promises
-        .access(createDownloadDirPath(documentsDir, path))
-        .then(() => resolve(true))
-        .catch(() => resolve(false));
-    });
-  };
+  const fileExists = async(path: string): Promise<boolean> => new Promise((resolve) => {
+    fs.promises
+      .access(createDownloadDirPath(documentsDir, path))
+      .then(() => resolve(true))
+      .catch(() => resolve(false));
+  });
 
   return new ArtifactStore(getFile, storeFile, fileExists);
 };
