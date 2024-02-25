@@ -11,6 +11,7 @@ export enum PositionStatus {
 }
 
 export type Position = {
+  id: string;
   url: string;
   prediction: Prediction;
   shares: number;

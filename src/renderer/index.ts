@@ -3,8 +3,18 @@ import render from './render';
 
 Logger.setLogLevel(LogLevel.debug);
 
-const main = async() => {
+const main = (): void => {
   render();
 };
 
-main().catch(console.error);
+try {
+  main();
+} catch (e) {
+  if (e instanceof Error) {
+    Logger.fatal(e.message);
+  } else if (typeof e === 'string') {
+    Logger.fatal(e);
+  } else {
+    Logger.fatal('Unknown error');
+  }
+}

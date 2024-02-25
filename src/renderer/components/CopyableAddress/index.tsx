@@ -9,11 +9,11 @@ import styles from './index.scss';
 const CopyableAddress: FunctionComponent = () => {
   const primaryAddress = useSelector(getPrimaryAddress);
   const shortPrimaryAddress = useSelector(getShortPrimaryAddress);
-  const onCopy = useCallback((() => {
+  const onCopy = useCallback((async() => {
     if (primaryAddress === undefined) {
       return;
     }
-    navigator.clipboard.writeText(primaryAddress);
+    await navigator.clipboard.writeText(primaryAddress);
     toast('Primary address copied to clipboard');
   }), [primaryAddress]);
   return (

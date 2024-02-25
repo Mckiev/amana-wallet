@@ -5,7 +5,7 @@ import App from './components/App';
 const rootElement = document.body;
 const root = ReactDOM.createRoot(rootElement);
 
-export default () => {
+export default (): void => {
   root.render((
     <App />
   ));

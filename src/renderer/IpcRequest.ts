@@ -4,10 +4,7 @@ import { IpcChannel } from '../common/ipcChannels';
 import store from './redux/store';
 import { AccountActions } from './redux/slices/account';
 
-type IpcRequest = (...parameters: any[]) => Promise<any>;
-type IpcRequests = Record<IpcChannel, IpcRequest>;
-
-const ipcRequest: IpcRequests = {
+const ipcRequest = {
   [IpcChannel.Mnemonic]: async(): Promise<string> => {
     const mnemonic: unknown = await ipcRenderer.invoke(IpcChannel.Mnemonic);
     if (typeof mnemonic !== 'string') {

@@ -1,10 +1,11 @@
 import type { SnarkJSGroth16 } from '@railgun-community/wallet';
 import { getProver, loadProvider, setLoggers, startRailgunEngine } from '@railgun-community/wallet';
 import type { FallbackProviderJsonConfig } from '@railgun-community/shared-models';
-import { MerkletreeScanUpdateEvent, NetworkName } from '@railgun-community/shared-models';
+import { NetworkName } from '@railgun-community/shared-models';
 import type { POIList } from '@railgun-community/engine';
 import { groth16 } from 'snarkjs';
 import Level from 'leveldown';
+import Logger from 'eleventh';
 import { createArtifactStore } from './create-artifact-store';
 
 export type Optional<T> = T | null | undefined;
@@ -13,18 +14,18 @@ type MapType<T> = {
   [key in NetworkName]?: T;
 };
 
-export const setEngineLoggers = () => {
-  // const logMessage: Optional<(msg: unknown) => void> = console.log;
-  // const logError: Optional<(err: unknown) => void> = console.error;
+export const setEngineLoggers = (): void => {
   setLoggers(
-    (message: unknown) => {
-      console.log('received a message log from railgun engine');
-      console.log(message);
+    (message: string) => {
+      Logger.info(message);
     },
-    (message: unknown) => {
-      console.log('received an error log from railgun engine');
-      console.log(message);
-    }
+    (error: string | Error) => {
+      if (typeof error === 'string') {
+        Logger.error(error);
+      } else {
+        Logger.error(error.message);
+      }
+    },
   );
 };
 
@@ -53,48 +54,32 @@ export const initializeEngine = async(): Promise<void> => {
   // load private wallets or balances.
   const skipMerkletreeScans = false;
 
-  // Array of aggregator node urls for Private Proof of Innocence (Private POI), in order of priority.
-  // Only one is required. If multiple urls are provided, requests will fall back to lower priority aggregator nodes if primary request fails.
-  // Please reach out in the RAILGUN builders groups for information on the public aggregator nodes run by the community.
-  //
-  // Private POI is a tool to give cryptographic assurance that funds
-  // entering the RAILGUN smart contract are not from a known list
-  // of transactions or actors considered undesirable by respective wallet providers.
   // For more information: https://docs.railgun.org/wiki/assurance/private-proofs-of-innocence
-  // (additional developer information coming soon).
   const poiNodeURLs: string[] = [];
 
   // Add a custom list to check Proof of Innocence against.
   // Leave blank to use the default list for the aggregator node provided.
   const customPOILists: POIList[] = [];
 
-  // Set to true if you would like to view verbose logs for private balance and TXID scans
+  // Set to true to view verbose logs for private balance and TXID scans
   const verboseScanLogging = false;
 
-  try {
-    await startRailgunEngine(
-      walletSource,
-      db,
-      shouldDebug,
-      artifactStore,
-      useNativeArtifacts,
-      skipMerkletreeScans,
-      poiNodeURLs,
-      customPOILists,
-      verboseScanLogging
-    );
-  } catch (e) {
-    console.log('Railgun engine failed to initialize');
-    console.log(e);
-  }
+  await startRailgunEngine(
+    walletSource,
+    db,
+    shouldDebug,
+    artifactStore,
+    useNativeArtifacts,
+    skipMerkletreeScans,
+    poiNodeURLs,
+    customPOILists,
+    verboseScanLogging
+  );
   const snarkGroth16: unknown = groth16;
+
+  // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
   getProver().setSnarkJSGroth16(snarkGroth16 as SnarkJSGroth16);
 };
-
-// export const onMerkletreeScanCallback = (eventData: MerkletreeScanUpdateEvent) => {
-//     console.log('onMerkletreeScanCallback');
-//     console.log(eventData);
-// };
 
 // Block numbers for each chain when wallet was first created.
 // If unknown, provide undefined.
@@ -104,7 +89,7 @@ export const creationBlockNumberMap: MapType<number> = {
 };
 
 // const polygonInfuraApi = process.env.POLYGON_INFURA_API ?? '';
-export const loadEngineProvider = async() => {
+export const loadEngineProvider = async(): Promise<void> => {
   const POLYGON_PROVIDERS_JSON: FallbackProviderJsonConfig = {
     chainId: 137,
     providers: [

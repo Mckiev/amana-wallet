@@ -5,17 +5,17 @@ import Panel from '../Panel';
 import { Prediction } from '../../types';
 import styles from './index.scss';
 
-enum Status {
+enum BetStatus {
   None = 'None',
   Submitting = 'Submitting',
   Confirming = 'Confirming',
   Confirmed = 'Confirmed',
-  Error = 'Error',
+  Failed = 'Failed',
 }
 
 const Bet: FunctionComponent = () => {
   const [prediction, setPrediction] = useState(Prediction.Unselected);
-  const [status, setStatus] = useState(Status.None);
+  const [betStatus, setBetStatus] = useState(BetStatus.None);
 
   const onClickYes = useCallback(() => {
     setPrediction(Prediction.Yes);
@@ -25,10 +25,10 @@ const Bet: FunctionComponent = () => {
   }, []);
 
   const onClick = useCallback(() => {
-    if (status === Status.None) {
-      setStatus(Status.Error);
+    if (betStatus === BetStatus.None) {
+      setBetStatus(BetStatus.Failed);
     }
-  }, [status]);
+  }, [betStatus]);
 
   return (
     <Panel>
@@ -37,6 +37,7 @@ const Bet: FunctionComponent = () => {
       <input type="text" name="manifoldUrl" />
       <p>
         Prediction:
+        {' '}
         <span
           onClick={onClickYes}
           className={classnames(styles.prediction, {
@@ -59,7 +60,7 @@ const Bet: FunctionComponent = () => {
       <button type="button" onClick={onClick}>Place Bet</button>
       <p>
         Status:
-        {status}
+        {betStatus}
       </p>
     </Panel>
   );

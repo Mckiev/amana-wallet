@@ -10,7 +10,9 @@ const Positions: FunctionComponent = () => {
   return (
     <Panel>
       <h2>Positions</h2>
-      {positions.map(position => <PositionDisplay position={position} />)}
+      {positions.map(position => (
+        <PositionDisplay key={position.id} position={position} />
+      ))}
     </Panel>
   );
 };

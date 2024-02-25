@@ -1,5 +1,6 @@
 import path from 'node:path';
 import { app, BrowserWindow } from 'electron';
+import Logger from 'eleventh';
 
 app.commandLine.appendSwitch('no-experimental-fetch');
 
@@ -7,8 +8,8 @@ let mainWindow: BrowserWindow | undefined;
 
 const getMainWindow = (): BrowserWindow | undefined => mainWindow;
 
-const initialize = () => {
-  const createWindow = () => {
+const initialize = async(): Promise<void> => {
+  const createWindow = async(): Promise<void> => {
     mainWindow = new BrowserWindow({
       width: 1200,
       height: 1000,
@@ -18,22 +19,29 @@ const initialize = () => {
         contextIsolation: false,
       },
     });
-    mainWindow.loadFile(path.join(__dirname, 'renderer/index.html'));
+    await mainWindow.loadFile(path.join(__dirname, 'renderer/index.html'));
     // mainWindow.webContents.openDevTools()
   };
-
-  app.whenReady().then(() => {
-    createWindow();
-    app.on('activate', () => {
-      if (BrowserWindow.getAllWindows().length === 0) {
-        createWindow();
-      }
-    });
-  });
 
   app.on('window-all-closed', () => {
     if (process.platform !== 'darwin') {
       app.quit();
+    }
+  });
+
+  await app.whenReady();
+  await createWindow();
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow().catch((e: unknown) => {
+        if (e instanceof Error) {
+          Logger.error(e.message);
+        } else if (typeof e === 'string') {
+          Logger.error(e);
+        } else {
+          Logger.error('Unknown error');
+        }
+      });
     }
   });
 };

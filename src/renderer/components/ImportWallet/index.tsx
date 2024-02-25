@@ -14,12 +14,12 @@ const ImportWallet: FunctionComponent = () => {
   }, []);
   const onClick = useCallback(async() => {
     dispatch(AccountActions.beginImporting());
-    const primaryAddress: string = await IpcRequest.RailgunAddress(mnemonic);
+    const primaryAddress: string = await IpcRequest.railgunAddress(mnemonic);
     dispatch(AccountActions.importAccount({
       mnemonic,
       primaryAddress,
     }));
-  }, [mnemonic]);
+  }, [dispatch, mnemonic]);
   return (
     <div className={styles.importWallet}>
       <h2>Import Wallet</h2>

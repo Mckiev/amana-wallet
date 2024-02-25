@@ -14,7 +14,11 @@ const WithdrawalModal: FunctionComponent = () => {
   const manifoldUser = useSelector(getWithdrawalManifoldUser);
   const amount = useSelector(getWithdrawalAmount);
   const onConfirm = useCallback(() => {
-    ipcRequest.Withdraw(mnemonic, amount, manifoldUser)
+    if (mnemonic === undefined) {
+      toast('Withdrawal failed: missing mnemonic');
+      return;
+    }
+    ipcRequest.withdraw(mnemonic, amount, manifoldUser)
       .catch((e) => {
         toast(`Withdrawal failed: ${e}`);
       });

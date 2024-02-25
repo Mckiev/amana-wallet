@@ -4,6 +4,7 @@ import {
   TXIDVersion,
   NetworkName,
   EVMGasType,
+  NETWORK_CONFIG,
 } from '@railgun-community/shared-models';
 import {
   gasEstimateForUnprovenTransfer,
@@ -11,10 +12,12 @@ import {
   populateProvedTransfer,
   refreshBalances,
 } from '@railgun-community/wallet';
-import { TransactionResponse, parseUnits } from 'ethers';
+import { parseUnits } from 'ethers';
+import Logger from 'eleventh';
 import config from '../../common/config';
 import constants from '../../common/constants';
-import { chain } from '.';
+
+const { chain } = NETWORK_CONFIG[NetworkName.Polygon];
 
 export async function sendTransfer(
   fromWalletId: string,
@@ -72,7 +75,7 @@ export async function sendTransfer(
   };
 
   const progressCallback = (progress: number): void => {
-    console.log(`Transfer proof progress: ${progress}`);
+    Logger.info(`Transfer proof progress: ${progress}`);
   };
 
   // Allow recipient to see RAILGUN address of sender
@@ -107,8 +110,6 @@ export async function sendTransfer(
     transactionGasDetails,
   );
 
-  console.log('transaction', populateResponse.transaction);
-
   const { data, gasLimit } = populateResponse.transaction;
 
   if (gasLimit === undefined) {
@@ -129,12 +130,4 @@ export async function sendTransfer(
       gasLimit: gasLimit.toString(),
     }),
   });
-
-  // const wallet_0x = Wallet.fromPhrase(config.mnemonic, new InfuraProvider(137));
-  // transaction_to_send.from = wallet_0x.address;
-  // console.log(transaction_to_send);
-  // // Send transaction
-  // const tx = await wallet_0x.sendTransaction(transaction_to_send);
-  // console.log('Sending transaction', tx.hash);
-  // return tx;
 }

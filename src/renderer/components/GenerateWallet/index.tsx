@@ -25,7 +25,7 @@ const GenerateWallet: FunctionComponent = () => {
   const buttonText = getButtonText(step);
   const onClick = useCallback(async() => {
     if (step === Step.Generate) {
-      const generatedMnemonic = await IpcRequest.Mnemonic();
+      const generatedMnemonic = await IpcRequest.mnemonic();
       setMnemonic(generatedMnemonic);
       setStep(Step.Copy);
       return;
@@ -34,18 +34,18 @@ const GenerateWallet: FunctionComponent = () => {
       throw new Error('Unexpected undefined mnemonic');
     }
     if (step === Step.Copy) {
-      navigator.clipboard.writeText(mnemonic);
+      await navigator.clipboard.writeText(mnemonic);
       toast('Mnemonic copied to clipboard');
       setStep(Step.Import);
     } else {
       dispatch(AccountActions.beginImporting());
-      const primaryAddress: string = await IpcRequest.RailgunAddress(mnemonic);
+      const primaryAddress: string = await IpcRequest.railgunAddress(mnemonic);
       dispatch(AccountActions.importAccount({
         mnemonic,
         primaryAddress,
       }));
     }
-  }, [step, mnemonic]);
+  }, [dispatch, step, mnemonic]);
   return (
     <div className={styles.generateWallet}>
       <h2>Generate Wallet</h2>

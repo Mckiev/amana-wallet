@@ -1,5 +1,5 @@
 export enum IpcChannel {
-  Mnemonic = 'Mnemonic',
-  RailgunAddress = 'RailgunAddress',
-  Withdraw = 'Withdraw',
+  Mnemonic = 'mnemonic',
+  RailgunAddress = 'railgunAddress',
+  Withdraw = 'withdraw',
 }

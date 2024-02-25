@@ -11,7 +11,7 @@ const Logs: FunctionComponent = () => {
     <Panel>
       <h2>Logs</h2>
       {logs.map(log => (
-        <div className={styles.log}>{log}</div>
+        <div className={styles.log} key={log}>{log}</div>
       ))}
     </Panel>
   );

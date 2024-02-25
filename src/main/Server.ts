@@ -4,15 +4,12 @@ import { IpcChannel } from '../common/ipcChannels';
 import Railgun from './railgun';
 import WindowManager from './WindowManager';
 
-type IpcHandler = (...parameters: any[]) => unknown;
-type IpcHandlers = Record<IpcChannel, IpcHandler>;
-
-const requests: IpcHandlers = {
-  [IpcChannel.Mnemonic]: () => {
+const requests = {
+  [IpcChannel.Mnemonic]: (): string => {
     const mnemonic = generateMnemonic(128);
     return mnemonic;
   },
-  [IpcChannel.RailgunAddress]: async(mnemonic: string) => {
+  [IpcChannel.RailgunAddress]: async(mnemonic: string): Promise<string> => {
     const wallet = await Railgun.getWallet(mnemonic);
     return wallet.getAddress();
   },
@@ -20,21 +17,20 @@ const requests: IpcHandlers = {
     mnemonic: string,
     amount: bigint,
     manifoldUser: string,
-  ) => {
+  ): Promise<void> => {
     await Railgun.withdraw(mnemonic, amount, manifoldUser);
   },
 };
 
-const initialize = () => {
+const initialize = (): void => {
   Object.entries(requests)
     .forEach(([channelName, channelHandler]) => {
-      ipcMain.handle(channelName, (event, ...parameters) => (
+      ipcMain.handle(channelName, async(e, ...parameters) => (
         channelHandler(...parameters)
       ));
     });
 
   Railgun.events.on('balance', (balance: bigint) => {
-    console.log('balance event emitted', balance);
     const mainWindow = WindowManager.getMainWindow();
     mainWindow?.webContents.send('Balance', balance);
   });
