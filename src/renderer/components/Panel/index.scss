@@ -1,0 +1,10 @@
+.panel {
+  border: 1px solid black;
+  border-radius: 0.5em;
+  padding: 1em;
+
+  &:nth-child(5) {
+    grid-column-start: 1;
+    grid-column-end: 3;
+  }
+}

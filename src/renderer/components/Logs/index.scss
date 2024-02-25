@@ -1,0 +1,11 @@
+.log {
+  padding: 0.5em 1.25em;
+  margin: 0.5em 0;
+  border: 1px solid #aaaaaa;
+  border-radius: 0.5em;
+  background-color: #eeeeee;
+
+  &:hover {
+    background-color: #dadada;
+  }
+}

@@ -1,0 +1,67 @@
+html, body {
+  border: 0;
+  padding: 0;
+  margin: 0;
+}
+
+.app {
+  font-family: Arial;
+  padding: 2.5em;
+
+  a {
+    color: #2b50d8;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  label {
+    display: block;
+    margin-top: 0.75em;
+  }
+
+  input, textarea {
+    display: block;
+    margin: 0.25em 0 0.5em;
+    padding: 0.25em 0.5em;
+    border: 1px solid #555555;
+    border-radius: 4px;
+    outline: none;
+
+    &:focus {
+      border-color: #000000;
+      outline: 1px solid #000000;
+    }
+  }
+
+  button {
+    margin: 0.75em 0;
+    border: 1px solid #333333;
+    border-radius: 4px;
+    background-color: #eeeeee;
+    padding: 0.5em 1em;
+    cursor: pointer;
+    outline: none;
+
+    &:hover {
+      background-color: #cccccc;
+    }
+
+    &:active {
+      background-color: #aaaaaa;
+    }
+
+    &:focus {
+      border-color: #000000;
+      outline: 1px solid #000000;
+    }
+  }
+}
+
+.layoutContainer {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 1em;
+}

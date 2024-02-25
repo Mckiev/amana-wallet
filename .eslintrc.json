@@ -1,0 +1,15 @@
+{
+  "extends": [
+    "principled/typescript",
+    "principled/react"
+  ],
+  "rules": {
+    "no-duplicate-imports": "off",
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": false
+      }
+    ]
+  }
+}
