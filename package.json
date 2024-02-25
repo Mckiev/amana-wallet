@@ -7,7 +7,7 @@
     "rebuild": "electron-rebuild -o leveldown",
     "build": "rm -rf dist && webpack",
     "start": "electron dist/index.js",
-    "dev": "webpack serve",
+    "dev": "npm run build && npm start",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix"
   },

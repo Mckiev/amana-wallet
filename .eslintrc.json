@@ -4,6 +4,12 @@
     "principled/react"
   ],
   "rules": {
-    "no-duplicate-imports": "off"
+    "no-duplicate-imports": "off",
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": false
+      }
+    ]
   }
 }

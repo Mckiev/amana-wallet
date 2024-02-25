@@ -1,29 +1,25 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
+import type { TransactionLog } from '../../../common/types';
 
 export type LogsState = {
-  logs: string[];
+  transactions: TransactionLog[];
 };
 
 const initialState: LogsState = {
-  // TODO:
-  logs: [
-    'Example log... Deposit was processed successfully',
-    'Example log... Bet was placed successfully',
-    'Example log... Bet was redeemed successfully',
-    'Example log... Withdrawal was processed successfully',
-  ],
+  transactions: [],
 };
 
-type AddLogAction = PayloadAction<string>;
+type AddLogAction = PayloadAction<TransactionLog[]>;
 
 const logsSlice = createSlice({
   name: 'logs',
   initialState,
   reducers: {
-    addLog: (state, action: AddLogAction) => {
-      const log = action.payload;
-      state.logs.push(log);
+    setTransactions: (state, action: AddLogAction) => {
+      state.transactions = action.payload.sort((a, b) => (
+        b.timestamp - a.timestamp
+      ));
     },
   },
 });

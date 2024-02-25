@@ -1,5 +1,6 @@
 import { createSelector } from '@reduxjs/toolkit';
 import type { Position } from '../types';
+import type { TransactionLog } from '../../common/types';
 import type { State } from './store';
 import type { AccountState } from './slices/account';
 import type { WithdrawalState } from './slices/withdrawal';
@@ -40,8 +41,8 @@ export const getIsLoggedIn = createSelector(
   primaryAddress => primaryAddress !== undefined,
 );
 
-export const getLogs = (state: State): string[] => (
-  state.logs.logs
+export const getTransactions = (state: State): TransactionLog[] => (
+  state.logs.transactions
 );
 
 export const getPositions = (state: State): Position[] => (

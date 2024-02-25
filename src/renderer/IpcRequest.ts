@@ -1,8 +1,10 @@
 import { ipcRenderer } from 'electron';
 import { toast } from 'react-toastify';
 import { IpcChannel } from '../common/ipcChannels';
+import type { TransactionLog } from '../common/types';
 import store from './redux/store';
 import { AccountActions } from './redux/slices/account';
+import { LogsActions } from './redux/slices/logs';
 
 const ipcRequest = {
   [IpcChannel.Mnemonic]: async(): Promise<string> => {
@@ -43,6 +45,11 @@ ipcRenderer.on('Balance', (e, balance: bigint) => {
     toast(`Balance updated to ${balance}`);
     store.dispatch(action);
   }
+});
+
+ipcRenderer.on('Transactions', (e, transactions: TransactionLog[]) => {
+  const action = LogsActions.setTransactions(transactions);
+  store.dispatch(action);
 });
 
 export default ipcRequest;

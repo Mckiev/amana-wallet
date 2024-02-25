@@ -5,6 +5,7 @@ import { createRailgunWallet as createWallet, refreshBalances, setOnBalanceUpdat
 import type { AbstractWallet } from '@railgun-community/engine';
 import config from '../../common/config';
 import constants from '../../common/constants';
+import { TransactionType, type TransactionLog } from '../../common/types';
 import { setEngineLoggers, initializeEngine, creationBlockNumberMap, loadEngineProvider } from './engine';
 import { sendTransfer } from './self-transfer';
 
@@ -23,15 +24,62 @@ const getWallet = async(mnemonic: string): Promise<AbstractWallet> => {
   return wallet;
 };
 
-const onBalanceUpdateCallback = ((e: RailgunBalancesEvent): void => {
+const onBalanceUpdateCallback = (
+  async(e: RailgunBalancesEvent): Promise<void> => {
   // TODO: filter by event.railgunWalletID
   // Amana balance
-  const amana = e.erc20Amounts.find(erc20Amount => (
-    erc20Amount.tokenAddress === constants.TOKENS.AMANA
-  ));
-  const amanaBalance = amana?.amount ?? 0n;
-  events.emit('balance', amanaBalance);
-});
+    const amana = e.erc20Amounts.find(erc20Amount => (
+      erc20Amount.tokenAddress === constants.TOKENS.AMANA
+    ));
+    const amanaBalance = amana?.amount ?? 0n;
+    events.emit('balance', amanaBalance);
+    const wallet = walletForID(e.railgunWalletID);
+    const transactions = await wallet.getTransactionHistory(chain, undefined);
+    const transactionLogs: TransactionLog[] = [];
+    transactions.forEach((transaction) => {
+      if (typeof transaction.timestamp !== 'number') {
+        return;
+      }
+      const timestamp = Math.floor(transaction.timestamp * 1000);
+      if (transaction.receiveTokenAmounts.length > 0) {
+        const token = transaction
+          .receiveTokenAmounts[0]?.tokenData.tokenAddress;
+        if (token !== constants.TOKENS.AMANA) {
+          return;
+        }
+        const memoText = typeof transaction.receiveTokenAmounts[0]?.memoText === 'string'
+          ? transaction.receiveTokenAmounts[0]?.memoText
+          : undefined;
+        const amount = transaction.receiveTokenAmounts[0]?.amount ?? 0n;
+        transactionLogs.push({
+          type: TransactionType.Incoming,
+          txid: transaction.txid,
+          timestamp,
+          amount: amount.toString(),
+          memoText,
+        });
+      } else {
+        const token = transaction
+          .transferTokenAmounts[0]?.tokenData.tokenAddress;
+        if (token !== constants.TOKENS.AMANA) {
+          return;
+        }
+        const memoText = typeof transaction.transferTokenAmounts[0]?.memoText === 'string'
+          ? transaction.transferTokenAmounts[0]?.memoText
+          : undefined;
+        const amount = transaction.transferTokenAmounts[0]?.amount ?? 0n;
+        transactionLogs.push({
+          type: TransactionType.Outgoing,
+          txid: transaction.txid,
+          timestamp,
+          amount: amount.toString(),
+          memoText,
+        });
+      }
+    });
+    events.emit('transactions', transactionLogs);
+  }
+);
 
 const initialize = async(): Promise<void> => {
   await initializeEngine();
