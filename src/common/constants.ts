@@ -12,4 +12,5 @@ export default {
     BOT_ID: '',
     maxWithdrawal: 100000n,
   },
+  RELAYER_HOST: 'https://plankton-app-hygxs.ondigitalocean.app',
 };
