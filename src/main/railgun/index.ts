@@ -13,12 +13,17 @@ const { chain } = NETWORK_CONFIG[NetworkName.Polygon];
 
 const events = new EventEmitter();
 
+let primaryWalletId: string | undefined;
+
 const getWallet = async(mnemonic: string): Promise<AbstractWallet> => {
   const railgunWalletInfo = await createWallet(
     config.encryptionKey,
     mnemonic,
     creationBlockNumberMap,
   );
+  if (primaryWalletId === undefined) {
+    primaryWalletId = railgunWalletInfo.id;
+  }
   const wallet = walletForID(railgunWalletInfo.id);
   await refreshBalances(chain, undefined);
   return wallet;
@@ -26,13 +31,16 @@ const getWallet = async(mnemonic: string): Promise<AbstractWallet> => {
 
 const onBalanceUpdateCallback = (
   async(e: RailgunBalancesEvent): Promise<void> => {
-  // TODO: filter by event.railgunWalletID
-  // Amana balance
+    const isPrimaryWallet = e.railgunWalletID === primaryWalletId;
     const amana = e.erc20Amounts.find(erc20Amount => (
       erc20Amount.tokenAddress === constants.TOKENS.AMANA
     ));
     const amanaBalance = amana?.amount ?? 0n;
-    events.emit('balance', amanaBalance);
+    if (isPrimaryWallet) {
+      events.emit('balance', amanaBalance);
+    } else if (amanaBalance > 0n) {
+      // TODO: sweep funds to primary wallet
+    }
     const wallet = walletForID(e.railgunWalletID);
     const transactions = await wallet.getTransactionHistory(chain, undefined);
     const transactionLogs: TransactionLog[] = [];
@@ -42,15 +50,21 @@ const onBalanceUpdateCallback = (
       }
       const timestamp = Math.floor(transaction.timestamp * 1000);
       if (transaction.receiveTokenAmounts.length > 0) {
-        const token = transaction
-          .receiveTokenAmounts[0]?.tokenData.tokenAddress;
-        if (token !== constants.TOKENS.AMANA) {
+        const amanaAmounts = transaction.receiveTokenAmounts.filter(amount => (
+          amount.tokenData.tokenAddress === constants.TOKENS.AMANA
+        ));
+        if (amanaAmounts.length === 0) {
           return;
         }
-        const memoText = typeof transaction.receiveTokenAmounts[0]?.memoText === 'string'
-          ? transaction.receiveTokenAmounts[0]?.memoText
+        const memoText = typeof amanaAmounts[0]?.memoText === 'string'
+          ? amanaAmounts[0]?.memoText
           : undefined;
-        const amount = transaction.receiveTokenAmounts[0]?.amount ?? 0n;
+        const amount = amanaAmounts.reduce(
+          (sum, amanaAmount) => (
+            sum + amanaAmount.amount
+          ),
+          0n,
+        );
         transactionLogs.push({
           type: TransactionType.Incoming,
           txid: transaction.txid,
@@ -59,15 +73,21 @@ const onBalanceUpdateCallback = (
           memoText,
         });
       } else {
-        const token = transaction
-          .transferTokenAmounts[0]?.tokenData.tokenAddress;
-        if (token !== constants.TOKENS.AMANA) {
+        const amanaAmounts = transaction.transferTokenAmounts.filter(amount => (
+          amount.tokenData.tokenAddress === constants.TOKENS.AMANA
+        ));
+        if (amanaAmounts.length === 0) {
           return;
         }
-        const memoText = typeof transaction.transferTokenAmounts[0]?.memoText === 'string'
-          ? transaction.transferTokenAmounts[0]?.memoText
+        const memoText = typeof amanaAmounts[0]?.memoText === 'string'
+          ? amanaAmounts[0]?.memoText
           : undefined;
-        const amount = transaction.transferTokenAmounts[0]?.amount ?? 0n;
+        const amount = amanaAmounts.reduce(
+          (sum, amanaAmount) => (
+            sum + amanaAmount.amount
+          ),
+          0n,
+        );
         transactionLogs.push({
           type: TransactionType.Outgoing,
           txid: transaction.txid,
@@ -77,7 +97,9 @@ const onBalanceUpdateCallback = (
         });
       }
     });
-    events.emit('transactions', transactionLogs);
+    if (isPrimaryWallet) {
+      events.emit('transactions', transactionLogs);
+    }
   }
 );
 
@@ -99,9 +121,36 @@ const withdraw = async(
   await sendTransfer(wallet.id, to, memoText, amount);
 };
 
+const bet = async(
+  mnemonic: string,
+  amount: bigint,
+  marketUrl: string,
+  prediction: string,
+): Promise<void> => {
+  const wallet = await getWallet(mnemonic);
+  const to = constants.RAILGUN.BOT_ADDRESS;
+  const transactions = await wallet.getTransactionHistory(chain, undefined);
+  const nonce = transactions.length + 1;
+  const redemptionWallet = await createWallet(
+    config.encryptionKey,
+    mnemonic,
+    creationBlockNumberMap,
+    nonce,
+  );
+  const redemptionAddress = redemptionWallet.railgunAddress;
+  const memoText = [
+    'bet',
+    marketUrl,
+    prediction,
+    redemptionAddress,
+  ].join('::');
+  await sendTransfer(wallet.id, to, memoText, amount);
+};
+
 export default {
   initialize,
   getWallet,
   events,
   withdraw,
+  bet,
 };

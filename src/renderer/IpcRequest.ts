@@ -36,6 +36,20 @@ const ipcRequest = {
       manifoldUser,
     );
   },
+  [IpcChannel.Bet]: async(
+    mnemonic: string,
+    amount: bigint,
+    marketUrl: string,
+    prediction: string,
+  ): Promise<void> => {
+    await ipcRenderer.invoke(
+      IpcChannel.Bet,
+      mnemonic,
+      amount,
+      marketUrl,
+      prediction,
+    );
+  },
 };
 
 ipcRenderer.on('Balance', (e, balance: bigint) => {
