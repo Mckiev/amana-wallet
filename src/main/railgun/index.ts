@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import type { RailgunBalancesEvent } from '@railgun-community/shared-models';
 import { NETWORK_CONFIG, NetworkName } from '@railgun-community/shared-models';
-import { createRailgunWallet as createWallet, refreshBalances, setOnBalanceUpdateCallback, walletForID } from '@railgun-community/wallet';
+import { createRailgunWallet, refreshBalances, setOnBalanceUpdateCallback, walletForID } from '@railgun-community/wallet';
 import type { AbstractWallet } from '@railgun-community/engine';
 import config from '../../common/config';
 import constants from '../../common/constants';
@@ -16,7 +16,7 @@ const events = new EventEmitter();
 let primaryWalletId: string | undefined;
 
 const getWallet = async(mnemonic: string): Promise<AbstractWallet> => {
-  const railgunWalletInfo = await createWallet(
+  const railgunWalletInfo = await createRailgunWallet(
     config.encryptionKey,
     mnemonic,
     creationBlockNumberMap,
@@ -27,6 +27,13 @@ const getWallet = async(mnemonic: string): Promise<AbstractWallet> => {
   const wallet = walletForID(railgunWalletInfo.id);
   await refreshBalances(chain, undefined);
   return wallet;
+};
+
+const getPrimaryWallet = (): AbstractWallet => {
+  if (primaryWalletId === undefined) {
+    throw new Error('Primary wallet ID is undefined');
+  }
+  return walletForID(primaryWalletId);
 };
 
 const onBalanceUpdateCallback = (
@@ -115,7 +122,7 @@ const withdraw = async(
   amount: bigint,
   manifoldUser: string,
 ): Promise<void> => {
-  const wallet = await getWallet(mnemonic);
+  const wallet = getPrimaryWallet();
   const to = constants.RAILGUN.BOT_ADDRESS;
   const memoText = `withdraw:${manifoldUser}`;
   await sendTransfer(wallet.id, to, memoText, amount);
@@ -127,11 +134,17 @@ const bet = async(
   marketUrl: string,
   prediction: string,
 ): Promise<void> => {
-  const wallet = await getWallet(mnemonic);
+  const wallet = getPrimaryWallet();
   const to = constants.RAILGUN.BOT_ADDRESS;
   const transactions = await wallet.getTransactionHistory(chain, undefined);
-  const nonce = transactions.length + 1;
-  const redemptionWallet = await createWallet(
+  const betTransactions = transactions.filter(transaction => (
+    transaction.transferTokenAmounts.find((tokenAmount) => {
+      const memo: unknown = tokenAmount.memoText;
+      return typeof memo === 'string' && memo.startsWith('bet');
+    }) !== undefined
+  ));
+  const nonce = betTransactions.length + 1;
+  const redemptionWallet = await createRailgunWallet(
     config.encryptionKey,
     mnemonic,
     creationBlockNumberMap,

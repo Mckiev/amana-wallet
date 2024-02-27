@@ -5,6 +5,8 @@ import type { TransactionLog } from '../common/types';
 import store from './redux/store';
 import { AccountActions } from './redux/slices/account';
 import { LogsActions } from './redux/slices/logs';
+import type { Position } from './types';
+import { PositionsActions } from './redux/slices/positions';
 
 const ipcRequest = {
   [IpcChannel.Mnemonic]: async(): Promise<string> => {
@@ -63,6 +65,11 @@ ipcRenderer.on('Balance', (e, balance: bigint) => {
 
 ipcRenderer.on('Transactions', (e, transactions: TransactionLog[]) => {
   const action = LogsActions.setTransactions(transactions);
+  store.dispatch(action);
+});
+
+ipcRenderer.on('Positions', (e, positions: Position[]) => {
+  const action = PositionsActions.setPositions(positions);
   store.dispatch(action);
 });
 

@@ -1,15 +1,15 @@
 import Logger, { LogLevel } from 'eleventh';
 import render from './render';
+import DataFetcher from './DataFetcher';
 
 Logger.setLogLevel(LogLevel.debug);
 
-const main = (): void => {
+const main = async(): Promise<void> => {
   render();
+  await DataFetcher.initialize();
 };
 
-try {
-  main();
-} catch (e) {
+main().catch((e: unknown) => {
   if (e instanceof Error) {
     Logger.fatal(e.message);
   } else if (typeof e === 'string') {
@@ -17,4 +17,4 @@ try {
   } else {
     Logger.fatal('Unknown error');
   }
-}
+});
