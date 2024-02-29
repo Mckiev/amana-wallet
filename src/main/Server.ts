@@ -23,6 +23,19 @@ const initialize = (): void => {
     }
   );
 
+  ipcMain.handle(
+    IpcChannel.Bet,
+    async(
+      e,
+      mnemonic: string,
+      amount: bigint,
+      marketUrl: string,
+      prediction: string,
+    ) => {
+      await Railgun.bet(mnemonic, amount, marketUrl, prediction);
+    }
+  );
+
   Railgun.events.on('balance', (balance: bigint) => {
     const mainWindow = WindowManager.getMainWindow();
     mainWindow?.webContents.send('Balance', balance);

@@ -1,13 +1,20 @@
 export enum Prediction {
   Unselected = 'Unselected',
-  Yes = 'Yes',
-  No = 'No',
+  Yes = 'YES',
+  No = 'NO',
 }
 
-export enum PositionStatus {
-  Open = 'Open',
-  Closing = 'Closing',
-  Closed = 'Closed',
+export enum ShareType {
+  yes = 'YES',
+  no = 'NO',
+}
+
+export enum BetState {
+  Placing = 'Placing',
+  Placed = 'Placed',
+  Redeeming = 'Redeeming',
+  Redeemed = 'Redeemed',
+  Failed = 'Failed',
 }
 
 export type Position = {
@@ -15,5 +22,5 @@ export type Position = {
   url: string;
   prediction: Prediction;
   shares: number;
-  status: PositionStatus;
+  state: BetState;
 };

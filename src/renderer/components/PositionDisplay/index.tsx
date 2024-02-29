@@ -27,7 +27,7 @@ const PositionDisplay: FunctionComponent<Props> = ({ position }) => (
     <div className={styles.value}>
       Status:
       {' '}
-      {position.status}
+      {position.state}
     </div>
     <button type="button">Close</button>
   </div>

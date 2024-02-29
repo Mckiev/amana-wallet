@@ -116,9 +116,7 @@ export async function sendTransfer(
     throw new Error('Unable to estimate gas limit');
   }
 
-  const host = 'http://localhost:9000'; // TODO: use production host, use config
-
-  const endpoint = `${host}/send-transaction`;
+  const endpoint = `${constants.RELAYER_HOST}/send-transaction`;
 
   await fetch(endpoint, {
     method: 'POST',

@@ -4,6 +4,7 @@ import type { TransactionLog } from '../../common/types';
 import type { State } from './store';
 import type { AccountState } from './slices/account';
 import type { WithdrawalState } from './slices/withdrawal';
+import type { BetState } from './slices/bet';
 
 const getAccount = (state: State): AccountState => (
   state.account
@@ -66,4 +67,28 @@ export const getWithdrawalManifoldUser = createSelector(
 export const getWithdrawalAmount = createSelector(
   getWithdrawal,
   withdrawal => BigInt(withdrawal.amount),
+);
+
+export const getBet = (state: State): BetState => (
+  state.bet
+);
+
+export const getBetStatus = createSelector(
+  getBet,
+  bet => bet.status,
+);
+
+export const getBetAmount = createSelector(
+  getBet,
+  bet => BigInt(bet.amount),
+);
+
+export const getBetMarketUrl = createSelector(
+  getBet,
+  bet => bet.marketUrl,
+);
+
+export const getBetPrediction = createSelector(
+  getBet,
+  bet => bet.prediction,
 );

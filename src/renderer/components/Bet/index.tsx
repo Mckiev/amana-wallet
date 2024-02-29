@@ -1,40 +1,52 @@
-import type { FunctionComponent } from 'react';
-import React, { useCallback, useState } from 'react';
+import type { ChangeEvent, FunctionComponent } from 'react';
+import React, { useCallback } from 'react';
 import classnames from 'classnames';
+import { useDispatch, useSelector } from 'react-redux';
 import Panel from '../Panel';
 import { Prediction } from '../../types';
+import { BetActions } from '../../redux/slices/bet';
+import { getBetAmount, getBetMarketUrl, getBetPrediction, getBetStatus } from '../../redux/selectors';
+import BetModal from '../BetModal';
 import styles from './index.scss';
 
-enum BetStatus {
-  None = 'None',
-  Submitting = 'Submitting',
-  Confirming = 'Confirming',
-  Confirmed = 'Confirmed',
-  Failed = 'Failed',
-}
-
 const Bet: FunctionComponent = () => {
-  const [prediction, setPrediction] = useState(Prediction.Unselected);
-  const [betStatus, setBetStatus] = useState(BetStatus.None);
+  const dispatch = useDispatch();
+  const betStatus = useSelector(getBetStatus);
+  const amount = useSelector(getBetAmount);
+  const marketUrl = useSelector(getBetMarketUrl);
+  const prediction = useSelector(getBetPrediction);
+
+  const onChangeBetAmount = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      dispatch(BetActions.updateAmount(e.target.value));
+    },
+    [dispatch],
+  );
+
+  const onChangeMarketUrl = useCallback(
+    (e: ChangeEvent<HTMLInputElement>) => {
+      dispatch(BetActions.updateMarketUrl(e.target.value));
+    },
+    [dispatch],
+  );
 
   const onClickYes = useCallback(() => {
-    setPrediction(Prediction.Yes);
-  }, []);
+    dispatch(BetActions.updatePrediction(Prediction.Yes));
+  }, [dispatch]);
+
   const onClickNo = useCallback(() => {
-    setPrediction(Prediction.No);
-  }, []);
+    dispatch(BetActions.updatePrediction(Prediction.No));
+  }, [dispatch]);
 
   const onClick = useCallback(() => {
-    if (betStatus === BetStatus.None) {
-      setBetStatus(BetStatus.Failed);
-    }
-  }, [betStatus]);
+    dispatch(BetActions.beginBet());
+  }, [dispatch]);
 
   return (
     <Panel>
       <h2>Bet</h2>
       <label htmlFor="manifoldUrl">Manifold URL</label>
-      <input type="text" name="manifoldUrl" />
+      <input value={marketUrl} onChange={onChangeMarketUrl} type="text" name="manifoldUrl" />
       <p>
         Prediction:
         {' '}
@@ -56,12 +68,13 @@ const Bet: FunctionComponent = () => {
         </span>
       </p>
       <label htmlFor="betAmount">Bet amount: </label>
-      <input type="number" name="betAmount" />
+      <input value={amount.toString()} onChange={onChangeBetAmount} type="number" name="betAmount" />
       <button type="button" onClick={onClick}>Place Bet</button>
       <p>
         Status:
         {betStatus}
       </p>
+      <BetModal />
     </Panel>
   );
 };
