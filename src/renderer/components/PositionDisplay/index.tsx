@@ -25,9 +25,21 @@ const PositionDisplay: FunctionComponent<Props> = ({ position }) => (
       {position.shares}
     </div>
     <div className={styles.value}>
+      Total purchase price:
+      {' '}
+      {position.purchasePrice}
+      {' '}
+      AMANA
+    </div>
+    <div className={styles.value}>
       Status:
       {' '}
       {position.state}
+    </div>
+    <div className={styles.value}>
+      Timestamp:
+      {' '}
+      {(new Date(position.timestamp)).toLocaleString()}
     </div>
     <button type="button">Close</button>
   </div>

@@ -18,7 +18,7 @@ const initialState: BetState = {
   status: BetStatus.None,
   amount: '0',
   marketUrl: '',
-  prediction: Prediction.Unselected,
+  prediction: Prediction.Yes,
 };
 
 type UpdateAmount = PayloadAction<string>;
@@ -45,7 +45,7 @@ const betSlice = createSlice({
       state.status = BetStatus.None;
       state.amount = '0';
       state.marketUrl = '';
-      state.prediction = Prediction.Unselected;
+      state.prediction = Prediction.Yes;
     },
     cancelBet: (state) => {
       state.status = BetStatus.None;

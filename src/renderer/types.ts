@@ -1,5 +1,4 @@
 export enum Prediction {
-  Unselected = 'Unselected',
   Yes = 'YES',
   No = 'NO',
 }
@@ -23,4 +22,6 @@ export type Position = {
   prediction: Prediction;
   shares: number;
   state: BetState;
+  timestamp: number;
+  purchasePrice: number;
 };
