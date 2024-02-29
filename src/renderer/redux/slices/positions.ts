@@ -17,7 +17,9 @@ const positionsSlice = createSlice({
   initialState,
   reducers: {
     setPositions: (state, action: AddPositionAction) => {
-      state.positions = action.payload;
+      state.positions = action.payload.sort((a, b) => (
+        b.timestamp - a.timestamp
+      ));
     },
   },
 });

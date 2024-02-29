@@ -40,6 +40,8 @@ const betToPosition = (bet: Bet): Position => ({
   prediction: bet.prediction,
   shares: bet.nShares ?? 0,
   state: bet.state,
+  timestamp: Number.parseInt(bet.timestamp, 10),
+  purchasePrice: Number.parseInt(bet.amount, 10),
 });
 
 const getRedemptionAddresses = (): string[] => {

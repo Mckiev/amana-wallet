@@ -1,26 +1,28 @@
 import type { ChangeEvent, FunctionComponent } from 'react';
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import classnames from 'classnames';
 import { useDispatch, useSelector } from 'react-redux';
 import Panel from '../Panel';
 import { Prediction } from '../../types';
 import { BetActions } from '../../redux/slices/bet';
-import { getBetAmount, getBetMarketUrl, getBetPrediction, getBetStatus } from '../../redux/selectors';
+import { getBetMarketUrl, getBetPrediction, getBetStatus } from '../../redux/selectors';
 import BetModal from '../BetModal';
 import styles from './index.scss';
 
 const Bet: FunctionComponent = () => {
   const dispatch = useDispatch();
   const betStatus = useSelector(getBetStatus);
-  const amount = useSelector(getBetAmount);
+  const [amountString, setAmountString] = useState<string>('0');
   const marketUrl = useSelector(getBetMarketUrl);
   const prediction = useSelector(getBetPrediction);
+  const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
   const onChangeBetAmount = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
-      dispatch(BetActions.updateAmount(e.target.value));
+      const value = e.target.value.replace(/\D/ug, '');
+      setAmountString(value);
     },
-    [dispatch],
+    [],
   );
 
   const onChangeMarketUrl = useCallback(
@@ -39,8 +41,20 @@ const Bet: FunctionComponent = () => {
   }, [dispatch]);
 
   const onClick = useCallback(() => {
+    const isValidUrl = marketUrl.startsWith('https://');
+    if (!isValidUrl) {
+      setErrorMessage('Error: A valid market URL must be provided.');
+      return;
+    }
+    const amountValue = Number.parseInt(amountString, 10);
+    const isValidAmount = Number.isSafeInteger(amountValue) && amountValue > 0;
+    if (!isValidAmount) {
+      setErrorMessage('Error: Amount must be a valid integer');
+      return;
+    }
+    dispatch(BetActions.updateAmount(amountString));
     dispatch(BetActions.beginBet());
-  }, [dispatch]);
+  }, [dispatch, amountString, marketUrl]);
 
   return (
     <Panel>
@@ -68,8 +82,11 @@ const Bet: FunctionComponent = () => {
         </span>
       </p>
       <label htmlFor="betAmount">Bet amount: </label>
-      <input value={amount.toString()} onChange={onChangeBetAmount} type="number" name="betAmount" />
+      <input min={1} step={1} value={amountString} onChange={onChangeBetAmount} type="number" name="betAmount" />
       <button type="button" onClick={onClick}>Place Bet</button>
+      <p className={styles.error}>
+        {errorMessage}
+      </p>
       <p>
         Status:
         {betStatus}
