@@ -1,34 +1,36 @@
 import type { FunctionComponent } from 'react';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
 import { getIsImporting, getIsLoggedIn } from '../../redux/selectors';
 import ImportWallet from '../ImportWallet';
 import GenerateWallet from '../GenerateWallet';
+import Modal from '../Modal';
 import styles from './index.scss';
+
+const importingContent = (
+  <Fragment>
+    <h1>Importing wallet...</h1>
+    <div className={styles.spinner} />
+  </Fragment>
+);
+
+const loginContent = (
+  <Fragment>
+    <ImportWallet />
+    <GenerateWallet />
+  </Fragment>
+);
 
 const LoginModal: FunctionComponent = () => {
   const isLoggedIn = useSelector(getIsLoggedIn);
   const isImporting = useSelector(getIsImporting);
-  if (isLoggedIn) {
-    return null;
-  }
-  if (isImporting) {
-    return (
-      <div className={styles.overlay}>
-        <div className={styles.modal}>
-          <h1>Importing wallet...</h1>
-          <div className={styles.spinner} />
-        </div>
-      </div>
-    );
-  }
+  const content = isImporting ? importingContent : loginContent;
   return (
-    <div className={styles.overlay}>
-      <div className={styles.modal}>
-        <ImportWallet />
-        <GenerateWallet />
+    <Modal isOpen={!isLoggedIn}>
+      <div className={styles.loginModal}>
+        {content}
       </div>
-    </div>
+    </Modal>
   );
 };
 
