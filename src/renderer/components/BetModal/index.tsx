@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { getBetAmount, getBetMarketUrl, getBetPrediction, getBetStatus, getMnemonic } from '../../redux/selectors';
 import ipcRequest from '../../IpcRequest';
 import { BetActions, BetStatus } from '../../redux/slices/bet';
+import Modal from '../Modal';
 import styles from './index.scss';
 
 const BetModal: FunctionComponent = () => {
@@ -31,15 +32,12 @@ const BetModal: FunctionComponent = () => {
   const onCancel = useCallback(() => {
     dispatch(BetActions.cancelBet());
   }, [dispatch]);
-  if (betStatus === BetStatus.None) {
-    return null;
-  }
   const amountLabel = `Bet amount: ${amount.toString()}`;
   const marketUrlLabel = `Manifold URL: ${marketUrl}`;
   const predictionLabel = `Prediction: ${prediction}`;
   return (
-    <div className={styles.overlay}>
-      <div className={styles.modal}>
+    <Modal isOpen={betStatus !== BetStatus.None}>
+      <div className={styles.betModal}>
         <h1>Bet Confirmation</h1>
         <p>Would you like to submit the following bet?</p>
         <p>{amountLabel}</p>
@@ -48,7 +46,7 @@ const BetModal: FunctionComponent = () => {
         <button type="button" onClick={onConfirm}>Confirm</button>
         <button type="button" onClick={onCancel}>Cancel</button>
       </div>
-    </div>
+    </Modal>
   );
 };
 

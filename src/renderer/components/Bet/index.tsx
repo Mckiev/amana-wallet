@@ -12,7 +12,7 @@ import styles from './index.scss';
 const Bet: FunctionComponent = () => {
   const dispatch = useDispatch();
   const betStatus = useSelector(getBetStatus);
-  const [amountString, setAmountString] = useState<string>('0');
+  const [amount, setAmount] = useState('0');
   const marketUrl = useSelector(getBetMarketUrl);
   const prediction = useSelector(getBetPrediction);
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
@@ -20,9 +20,9 @@ const Bet: FunctionComponent = () => {
   const onChangeBetAmount = useCallback(
     (e: ChangeEvent<HTMLInputElement>) => {
       const value = e.target.value.replace(/\D/ug, '');
-      setAmountString(value);
+      setAmount(value);
     },
-    [],
+    [setAmount],
   );
 
   const onChangeMarketUrl = useCallback(
@@ -46,16 +46,16 @@ const Bet: FunctionComponent = () => {
       setErrorMessage('Error: A valid market URL must be provided.');
       return;
     }
-    const amountValue = Number.parseInt(amountString, 10);
+    const amountValue = Number.parseInt(amount, 10);
     const isValidAmount = Number.isSafeInteger(amountValue) && amountValue > 0;
     if (!isValidAmount) {
       setErrorMessage('Error: Amount must be a valid integer');
       return;
     }
     setErrorMessage(undefined);
-    dispatch(BetActions.updateAmount(amountString));
+    dispatch(BetActions.updateAmount(amount));
     dispatch(BetActions.beginBet());
-  }, [dispatch, amountString, marketUrl]);
+  }, [dispatch, amount, marketUrl]);
 
   return (
     <Panel>
@@ -83,7 +83,7 @@ const Bet: FunctionComponent = () => {
         </span>
       </p>
       <label htmlFor="betAmount">Bet amount: </label>
-      <input min={1} step={1} value={amountString} onChange={onChangeBetAmount} type="number" name="betAmount" />
+      <input min={1} step={1} value={amount} onChange={onChangeBetAmount} type="number" name="betAmount" />
       <button type="button" onClick={onClick}>Place Bet</button>
       <p className={styles.error}>
         {errorMessage}

@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { app, BrowserWindow } from 'electron';
+import { app, screen as electronScreen, BrowserWindow } from 'electron';
 import Logger from 'eleventh';
 
 app.commandLine.appendSwitch('no-experimental-fetch');
@@ -10,9 +10,10 @@ const getMainWindow = (): BrowserWindow | undefined => mainWindow;
 
 const initialize = async(): Promise<void> => {
   const createWindow = async(): Promise<void> => {
+    const primaryDisplay = electronScreen.getPrimaryDisplay();
     mainWindow = new BrowserWindow({
-      width: 1200,
-      height: 1000,
+      width: Math.round(primaryDisplay.size.width * 0.6),
+      height: Math.round(primaryDisplay.size.height * 0.8),
       webPreferences: {
         // preload: path.join(__dirname, 'renderer/preload.js'),
         nodeIntegration: true,

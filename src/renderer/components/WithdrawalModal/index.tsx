@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { getMnemonic, getWithdrawalAmount, getWithdrawalManifoldUser, getWithdrawalStatus } from '../../redux/selectors';
 import { WithdrawalActions, WithdrawalStatus } from '../../redux/slices/withdrawal';
 import ipcRequest from '../../IpcRequest';
-import styles from './index.scss';
+import Modal from '../Modal';
 
 const WithdrawalModal: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -30,22 +30,17 @@ const WithdrawalModal: FunctionComponent = () => {
   const onCancel = useCallback(() => {
     dispatch(WithdrawalActions.cancelWithdrawal());
   }, [dispatch]);
-  if (withdrawalStatus === WithdrawalStatus.None) {
-    return null;
-  }
   const usernameLabel = `Manifold username: ${manifoldUser}`;
   const amountLabel = `Withdrawal amount: ${amount.toString()}`;
   return (
-    <div className={styles.overlay}>
-      <div className={styles.modal}>
-        <h1>Withdrawal Confirmation</h1>
-        <p>Would you like to submit the following withdrawal?</p>
-        <p>{usernameLabel}</p>
-        <p>{amountLabel}</p>
-        <button type="button" onClick={onConfirm}>Confirm</button>
-        <button type="button" onClick={onCancel}>Cancel</button>
-      </div>
-    </div>
+    <Modal isOpen={withdrawalStatus !== WithdrawalStatus.None}>
+      <h1>Withdrawal Confirmation</h1>
+      <p>Would you like to submit the following withdrawal?</p>
+      <p>{usernameLabel}</p>
+      <p>{amountLabel}</p>
+      <button type="button" onClick={onConfirm}>Confirm</button>
+      <button type="button" onClick={onCancel}>Cancel</button>
+    </Modal>
   );
 };
 
