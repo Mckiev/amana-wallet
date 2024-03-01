@@ -1,13 +1,16 @@
 import EventEmitter from 'events';
 import type { RailgunBalancesEvent } from '@railgun-community/shared-models';
 import { NETWORK_CONFIG, NetworkName } from '@railgun-community/shared-models';
-import { createRailgunWallet, refreshBalances, setOnBalanceUpdateCallback, walletForID } from '@railgun-community/wallet';
+import { createRailgunWallet, refreshBalances, setOnBalanceUpdateCallback, signWithWalletViewingKey, walletForID } from '@railgun-community/wallet';
 import type { AbstractWallet } from '@railgun-community/engine';
 import config from '../../common/config';
 import constants from '../../common/constants';
 import { TransactionType, type TransactionLog } from '../../common/types';
 import { setEngineLoggers, initializeEngine, creationBlockNumberMap, loadEngineProvider } from './engine';
 import { sendTransfer } from './self-transfer';
+
+// Hex value of message string: "Redeem AMANA Bet"
+const REDEEM_MESSAGE_HEX = '52656465656d20414d414e4120426574';
 
 const { chain } = NETWORK_CONFIG[NetworkName.Polygon];
 
@@ -160,10 +163,45 @@ const bet = async(
   await sendTransfer(wallet.id, to, memoText, amount);
 };
 
+const getRedemptionWalletId = async(
+  mnemonic: string,
+  address: string,
+): Promise<string> => {
+  const primary = getPrimaryWallet();
+  const transactions = await primary.getTransactionHistory(chain, undefined);
+  const maxNonce = transactions.length + 1;
+  for (let nonce = 1; nonce <= maxNonce; nonce += 1) {
+    // eslint-disable-next-line no-await-in-loop
+    const wallet = await createRailgunWallet(
+      config.encryptionKey,
+      mnemonic,
+      creationBlockNumberMap,
+      nonce,
+    );
+    if (wallet.railgunAddress === address) {
+      return wallet.id;
+    }
+  }
+  throw new Error('Redemption wallet not found');
+};
+
+const signRedemption = async(
+  mnemonic: string,
+  redemptionAddress: string,
+): Promise<string> => {
+  const walletId = await getRedemptionWalletId(mnemonic, redemptionAddress);
+  const signature = await signWithWalletViewingKey(
+    walletId,
+    REDEEM_MESSAGE_HEX,
+  );
+  return signature;
+};
+
 export default {
   initialize,
   getWallet,
   events,
   withdraw,
   bet,
+  signRedemption,
 };

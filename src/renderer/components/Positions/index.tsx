@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import Panel from '../Panel';
 import { getPositions } from '../../redux/selectors';
 import PositionDisplay from '../PositionDisplay';
+import RedemptionModal from '../RedemptionModal';
 
 const Positions: FunctionComponent = () => {
   const positions = useSelector(getPositions);
@@ -13,6 +14,7 @@ const Positions: FunctionComponent = () => {
       {positions.map(position => (
         <PositionDisplay key={position.id} position={position} />
       ))}
+      <RedemptionModal />
     </Panel>
   );
 };

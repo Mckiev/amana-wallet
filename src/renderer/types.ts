@@ -24,4 +24,5 @@ export type Position = {
   state: BetState;
   timestamp: number;
   purchasePrice: number;
+  redemptionAddress: string;
 };

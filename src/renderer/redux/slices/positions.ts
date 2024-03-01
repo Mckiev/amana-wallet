@@ -1,9 +1,10 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
-import type { Position } from '../../types';
+import { BetState, type Position } from '../../types';
 
 export type PositionsState = {
   positions: Position[];
+  redeemingPositionId?: string;
 };
 
 const initialState: PositionsState = {
@@ -11,6 +12,7 @@ const initialState: PositionsState = {
 };
 
 type AddPositionAction = PayloadAction<Position[]>;
+type BeginRedeemingAction = PayloadAction<string>;
 
 const positionsSlice = createSlice({
   name: 'positions',
@@ -20,6 +22,21 @@ const positionsSlice = createSlice({
       state.positions = action.payload.sort((a, b) => (
         b.timestamp - a.timestamp
       ));
+    },
+    beginRedeeming: (state, action: BeginRedeemingAction) => {
+      state.redeemingPositionId = action.payload;
+    },
+    completeRedeeming: (state) => {
+      const position = state.positions.find(({ id }) => (
+        id === state.redeemingPositionId
+      ));
+      if (position !== undefined) {
+        position.state = BetState.Redeeming;
+      }
+      state.redeemingPositionId = undefined;
+    },
+    cancelRedeeming: (state) => {
+      state.redeemingPositionId = undefined;
     },
   },
 });

@@ -50,6 +50,18 @@ export const getPositions = (state: State): Position[] => (
   state.positions.positions
 );
 
+export const getRedeemingPositionId = (state: State): string | undefined => (
+  state.positions.redeemingPositionId
+);
+
+export const getRedeemingPosition = createSelector(
+  getPositions,
+  getRedeemingPositionId,
+  (positions, redeemingPositionId) => positions.find(position => (
+    position.id === redeemingPositionId
+  )),
+);
+
 export const getWithdrawal = (state: State): WithdrawalState => (
   state.withdrawal
 );

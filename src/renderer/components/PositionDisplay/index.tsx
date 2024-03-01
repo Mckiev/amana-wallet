@@ -1,48 +1,60 @@
 import type { FunctionComponent } from 'react';
-import React from 'react';
-import type { Position } from '../../types';
+import React, { useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { BetState, type Position } from '../../types';
+import { PositionsActions } from '../../redux/slices/positions';
 import styles from './index.scss';
 
 type Props = {
   position: Position;
 };
 
-const PositionDisplay: FunctionComponent<Props> = ({ position }) => (
-  <div className={styles.positionDisplay}>
-    <div className={styles.value}>
-      URL:
-      {' '}
-      <a href={position.url} target="_blank" rel="noreferrer">{position.url}</a>
+const PositionDisplay: FunctionComponent<Props> = ({ position }) => {
+  const dispatch = useDispatch();
+  const onClick = useCallback(() => {
+    dispatch(PositionsActions.beginRedeeming(position.id));
+  }, [dispatch, position.id]);
+  return (
+    <div className={styles.positionDisplay}>
+      <div className={styles.value}>
+        URL:
+        {' '}
+        <a href={position.url} target="_blank" rel="noreferrer">{position.url}</a>
+      </div>
+      <div className={styles.value}>
+        Prediction:
+        {' '}
+        {position.prediction}
+      </div>
+      <div className={styles.value}>
+        Shares:
+        {' '}
+        {position.shares}
+      </div>
+      <div className={styles.value}>
+        Total purchase price:
+        {' '}
+        {position.purchasePrice}
+        {' '}
+        AMANA
+      </div>
+      <div className={styles.value}>
+        Status:
+        {' '}
+        {position.state}
+      </div>
+      <div className={styles.value}>
+        Timestamp:
+        {' '}
+        {(new Date(position.timestamp)).toLocaleString()}
+      </div>
+      {
+        position.state === BetState.Placed
+          ? <button type="button" onClick={onClick}>Close Position</button>
+          : null
+      }
     </div>
-    <div className={styles.value}>
-      Prediction:
-      {' '}
-      {position.prediction}
-    </div>
-    <div className={styles.value}>
-      Shares:
-      {' '}
-      {position.shares}
-    </div>
-    <div className={styles.value}>
-      Total purchase price:
-      {' '}
-      {position.purchasePrice}
-      {' '}
-      AMANA
-    </div>
-    <div className={styles.value}>
-      Status:
-      {' '}
-      {position.state}
-    </div>
-    <div className={styles.value}>
-      Timestamp:
-      {' '}
-      {(new Date(position.timestamp)).toLocaleString()}
-    </div>
-    <button type="button">Close</button>
-  </div>
-);
+  );
+};
 
 export default PositionDisplay;

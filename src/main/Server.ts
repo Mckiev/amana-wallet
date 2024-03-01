@@ -2,6 +2,7 @@ import { ipcMain } from 'electron';
 import { generateMnemonic } from 'bip39';
 import { IpcChannel } from '../common/ipcChannels';
 import type { TransactionLog } from '../common/types';
+import constants from '../common/constants';
 import Railgun from './railgun';
 import WindowManager from './WindowManager';
 
@@ -33,6 +34,31 @@ const initialize = (): void => {
       prediction: string,
     ) => {
       await Railgun.bet(mnemonic, amount, marketUrl, prediction);
+    }
+  );
+
+  ipcMain.handle(
+    IpcChannel.Redeem,
+    async(
+      e,
+      mnemonic: string,
+      redemptionAddress: string,
+    ) => {
+      const signature = await Railgun.signRedemption(
+        mnemonic,
+        redemptionAddress,
+      );
+      const endpoint = `${constants.RELAYER_HOST}/redeem`;
+      await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          redemptionAddress,
+          signature,
+        }),
+      });
     }
   );
 
