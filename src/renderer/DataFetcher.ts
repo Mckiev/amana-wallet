@@ -42,6 +42,7 @@ const betToPosition = (bet: Bet): Position => ({
   state: bet.state,
   timestamp: Number.parseInt(bet.timestamp, 10),
   purchasePrice: Number.parseInt(bet.amount, 10),
+  redemptionAddress: bet.redemptionAddress,
 });
 
 const getRedemptionAddresses = (): string[] => {
@@ -66,7 +67,7 @@ const fetchPositions = async(): Promise<void> => {
   }
   const action = PositionsActions.setPositions(positions);
   store.dispatch(action);
-  setTimeout(fetchPositions, 30_000);
+  setTimeout(fetchPositions, 10_000);
 };
 
 const initialize = async(): Promise<void> => {

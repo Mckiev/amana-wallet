@@ -52,6 +52,16 @@ const ipcRequest = {
       prediction,
     );
   },
+  [IpcChannel.Redeem]: async(
+    mnemonic: string,
+    redemptionAddress: string,
+  ): Promise<void> => {
+    await ipcRenderer.invoke(
+      IpcChannel.Redeem,
+      mnemonic,
+      redemptionAddress,
+    );
+  },
 };
 
 ipcRenderer.on('Balance', (e, balance: bigint) => {

@@ -3,4 +3,5 @@ export enum IpcChannel {
   RailgunAddress = 'railgunAddress',
   Withdraw = 'withdraw',
   Bet = 'bet',
+  Redeem = 'redeem',
 }
