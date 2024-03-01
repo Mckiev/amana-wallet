@@ -52,6 +52,7 @@ const Bet: FunctionComponent = () => {
       setErrorMessage('Error: Amount must be a valid integer');
       return;
     }
+    setErrorMessage(undefined);
     dispatch(BetActions.updateAmount(amountString));
     dispatch(BetActions.beginBet());
   }, [dispatch, amountString, marketUrl]);
