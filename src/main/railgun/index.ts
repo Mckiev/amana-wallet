@@ -3,6 +3,7 @@ import type { RailgunBalancesEvent } from '@railgun-community/shared-models';
 import { NETWORK_CONFIG, NetworkName } from '@railgun-community/shared-models';
 import { createRailgunWallet, refreshBalances, setOnBalanceUpdateCallback, signWithWalletViewingKey, walletForID } from '@railgun-community/wallet';
 import type { AbstractWallet } from '@railgun-community/engine';
+import Logger from 'eleventh';
 import config from '../../common/config';
 import constants from '../../common/constants';
 import { TransactionType, type TransactionLog } from '../../common/types';
@@ -39,6 +40,14 @@ const getPrimaryWallet = (): AbstractWallet => {
   return walletForID(primaryWalletId);
 };
 
+const sweep = async(from: string, amount: bigint): Promise<void> => {
+  const wallet = walletForID(from);
+  const to = getPrimaryWallet().getAddress();
+  const memoText = `sweep:${wallet.getAddress()}`;
+  Logger.info('Sweeping funds from redemption wallet', { from, to, amount: amount.toString() });
+  await sendTransfer(from, to, memoText, amount);
+};
+
 const onBalanceUpdateCallback = (
   async(e: RailgunBalancesEvent): Promise<void> => {
     const isPrimaryWallet = e.railgunWalletID === primaryWalletId;
@@ -49,7 +58,7 @@ const onBalanceUpdateCallback = (
     if (isPrimaryWallet) {
       events.emit('balance', amanaBalance);
     } else if (amanaBalance > 0n) {
-      // TODO: sweep funds to primary wallet
+      await sweep(e.railgunWalletID, amanaBalance);
     }
     const wallet = walletForID(e.railgunWalletID);
     const transactions = await wallet.getTransactionHistory(chain, undefined);
