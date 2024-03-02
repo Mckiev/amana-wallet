@@ -29,7 +29,7 @@ const getWallet = async(mnemonic: string): Promise<AbstractWallet> => {
     primaryWalletId = railgunWalletInfo.id;
   }
   const wallet = walletForID(railgunWalletInfo.id);
-  await refreshBalances(chain, undefined);
+  await refreshBalances(chain, [railgunWalletInfo.id]);
   return wallet;
 };
 

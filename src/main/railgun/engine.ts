@@ -84,8 +84,7 @@ export const initializeEngine = async(): Promise<void> => {
 // Block numbers for each chain when wallet was first created.
 // If unknown, provide undefined.
 export const creationBlockNumberMap: MapType<number> = {
-  [NetworkName.Ethereum]: 15725700,
-  [NetworkName.Polygon]: 3421400,
+  [NetworkName.Polygon]: 52151390,
 };
 
 // const polygonInfuraApi = process.env.POLYGON_INFURA_API ?? '';

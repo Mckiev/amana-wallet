@@ -52,7 +52,7 @@ export async function sendTransfer(
   };
 
   // Need to refresh balances, or wallet may try to spend already spent UTXOs.
-  await refreshBalances(chain, undefined);
+  await refreshBalances(chain, [fromWalletId]);
 
   const { gasEstimate } = await gasEstimateForUnprovenTransfer(
     TXIDVersion.V2_PoseidonMerkle,
