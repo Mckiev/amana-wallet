@@ -2,7 +2,7 @@ import type { FunctionComponent } from 'react';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { getMnemonic, getWithdrawalAmount, getWithdrawalManifoldUser, getWithdrawalStatus } from '../../redux/selectors';
+import { getMnemonic, getWithdrawalAmount, getWithdrawalManifoldUser, getWithdrawalStatus, getEncryptionKey } from '../../redux/selectors';
 import { WithdrawalActions, WithdrawalStatus } from '../../redux/slices/withdrawal';
 import ipcRequest from '../../IpcRequest';
 import Modal from '../Modal';
@@ -10,6 +10,7 @@ import Modal from '../Modal';
 const WithdrawalModal: FunctionComponent = () => {
   const dispatch = useDispatch();
   const mnemonic = useSelector(getMnemonic);
+  const encryptionKey = useSelector(getEncryptionKey);
   const withdrawalStatus = useSelector(getWithdrawalStatus);
   const manifoldUser = useSelector(getWithdrawalManifoldUser);
   const amount = useSelector(getWithdrawalAmount);
@@ -18,7 +19,11 @@ const WithdrawalModal: FunctionComponent = () => {
       toast('Withdrawal failed: missing mnemonic');
       return;
     }
-    ipcRequest.withdraw(mnemonic, amount, manifoldUser)
+    if (encryptionKey === undefined) {
+      toast('Withdrawal failed: missing encryption key');
+      return;
+    }
+    ipcRequest.withdraw(mnemonic, encryptionKey, amount, manifoldUser)
       .catch((e) => {
         toast(`Withdrawal failed: ${e}`);
       });
@@ -26,7 +31,7 @@ const WithdrawalModal: FunctionComponent = () => {
     // TODO: Do not toast until the main process has
     // actually submitted the proof
     toast('Withdrawal submitted');
-  }, [dispatch, mnemonic, amount, manifoldUser]);
+  }, [dispatch, mnemonic, encryptionKey, amount, manifoldUser]);
   const onCancel = useCallback(() => {
     dispatch(WithdrawalActions.cancelWithdrawal());
   }, [dispatch]);

@@ -2,7 +2,7 @@ import type { FunctionComponent } from 'react';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { getMnemonic, getRedeemingPosition } from '../../redux/selectors';
+import { getMnemonic, getRedeemingPosition, getEncryptionKey } from '../../redux/selectors';
 import ipcRequest from '../../IpcRequest';
 import Modal from '../Modal';
 import { PositionsActions } from '../../redux/slices/positions';
@@ -10,6 +10,7 @@ import { PositionsActions } from '../../redux/slices/positions';
 const RedemptionModal: FunctionComponent = () => {
   const dispatch = useDispatch();
   const mnemonic = useSelector(getMnemonic);
+  const encryptionKey = useSelector(getEncryptionKey);
   const position = useSelector(getRedeemingPosition);
   const onConfirm = useCallback(() => {
     if (typeof mnemonic !== 'string') {
@@ -18,13 +19,16 @@ const RedemptionModal: FunctionComponent = () => {
     if (position === undefined) {
       return;
     }
-    ipcRequest.redeem(mnemonic, position.redemptionAddress)
+    if (encryptionKey === undefined) {
+      return;
+    }
+    ipcRequest.redeem(mnemonic, encryptionKey, position.redemptionAddress)
       .catch((e) => {
         toast(`Redemption request failed: ${e}`);
       });
     toast('Redemption request submitted');
     dispatch(PositionsActions.completeRedeeming());
-  }, [dispatch, mnemonic, position]);
+  }, [dispatch, mnemonic, encryptionKey, position]);
   const onCancel = useCallback(() => {
     dispatch(PositionsActions.cancelRedeeming());
   }, [dispatch]);

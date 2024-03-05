@@ -1,6 +1,6 @@
 export enum IpcChannel {
   Mnemonic = 'mnemonic',
-  RailgunAddress = 'railgunAddress',
+  RailgunAddressAndKey = 'railgunAddressAndKey',
   Withdraw = 'withdraw',
   Bet = 'bet',
   Redeem = 'redeem',

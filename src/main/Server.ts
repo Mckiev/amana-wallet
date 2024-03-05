@@ -12,15 +12,18 @@ const initialize = (): void => {
     return mnemonic;
   });
 
-  ipcMain.handle(IpcChannel.RailgunAddress, async(e, mnemonic: string) => {
-    const wallet = await Railgun.getWallet(mnemonic);
-    return wallet.getAddress();
-  });
+  ipcMain.handle(
+    IpcChannel.RailgunAddressAndKey, 
+    async(e, mnemonic: string) => {
+      const {wallet, encryptionKey} = await Railgun.getWalletAndKey(mnemonic);
+      return {railgunAddress: wallet.getAddress(), encryptionKey};
+    }
+  );
 
   ipcMain.handle(
     IpcChannel.Withdraw,
-    async(e, mnemonic: string, amount: bigint, manifoldUser: string) => {
-      await Railgun.withdraw(mnemonic, amount, manifoldUser);
+    async(e, mnemonic: string, encryptionKey: string, amount: bigint, manifoldUser: string) => {
+      await Railgun.withdraw(mnemonic, encryptionKey, amount, manifoldUser);
     }
   );
 
@@ -29,11 +32,12 @@ const initialize = (): void => {
     async(
       e,
       mnemonic: string,
+      encryptionKey: string,
       amount: bigint,
       marketUrl: string,
       prediction: string,
     ) => {
-      await Railgun.bet(mnemonic, amount, marketUrl, prediction);
+      await Railgun.bet(mnemonic, encryptionKey, amount, marketUrl, prediction);
     }
   );
 
@@ -42,10 +46,12 @@ const initialize = (): void => {
     async(
       e,
       mnemonic: string,
+      encryptionKey: string,
       redemptionAddress: string,
     ) => {
       const signature = await Railgun.signRedemption(
         mnemonic,
+        encryptionKey,
         redemptionAddress,
       );
       const endpoint = `${constants.RELAYER_HOST}/redeem`;

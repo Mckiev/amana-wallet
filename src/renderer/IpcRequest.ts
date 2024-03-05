@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron';
 import { toast } from 'react-toastify';
 import { IpcChannel } from '../common/ipcChannels';
-import type { TransactionLog } from '../common/types';
+import { isObjectRecord, type TransactionLog } from '../common/types';
 import store from './redux/store';
 import { AccountActions } from './redux/slices/account';
 import { LogsActions } from './redux/slices/logs';
@@ -16,30 +16,41 @@ const ipcRequest = {
     }
     return mnemonic;
   },
-  [IpcChannel.RailgunAddress]: async(mnemonic: string): Promise<string> => {
-    const railgunAddress: unknown = await ipcRenderer.invoke(
-      IpcChannel.RailgunAddress,
+  [IpcChannel.RailgunAddressAndKey]: async(mnemonic: string):
+  Promise<[string, string]> => {
+    const response: unknown = await ipcRenderer.invoke(
+      IpcChannel.RailgunAddressAndKey,
       mnemonic,
     );
+    if (!isObjectRecord(response)) {
+      throw new Error('Invalid response');
+    }
+    const {railgunAddress, encryptionKey} = response;
     if (typeof railgunAddress !== 'string') {
       throw new Error('Invalid railgun address');
     }
-    return railgunAddress;
+    if (typeof encryptionKey !== 'string') {
+      throw new Error('Invalid encryption key');
+    }
+    return [railgunAddress, encryptionKey];
   },
   [IpcChannel.Withdraw]: async(
     mnemonic: string,
+    encryptionKey: string,
     amount: bigint,
     manifoldUser: string,
   ): Promise<void> => {
     await ipcRenderer.invoke(
       IpcChannel.Withdraw,
       mnemonic,
+      encryptionKey,
       amount,
       manifoldUser,
     );
   },
   [IpcChannel.Bet]: async(
     mnemonic: string,
+    encryptionKey: string,
     amount: bigint,
     marketUrl: string,
     prediction: string,
@@ -47,6 +58,7 @@ const ipcRequest = {
     await ipcRenderer.invoke(
       IpcChannel.Bet,
       mnemonic,
+      encryptionKey,
       amount,
       marketUrl,
       prediction,
@@ -54,11 +66,13 @@ const ipcRequest = {
   },
   [IpcChannel.Redeem]: async(
     mnemonic: string,
+    encryptionKey: string,
     redemptionAddress: string,
   ): Promise<void> => {
     await ipcRenderer.invoke(
       IpcChannel.Redeem,
       mnemonic,
+      encryptionKey,
       redemptionAddress,
     );
   },

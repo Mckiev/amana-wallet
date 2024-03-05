@@ -1,10 +1,9 @@
 import EventEmitter from 'events';
 import type { RailgunBalancesEvent } from '@railgun-community/shared-models';
 import { NETWORK_CONFIG, NetworkName } from '@railgun-community/shared-models';
-import { createRailgunWallet, refreshBalances, setOnBalanceUpdateCallback, signWithWalletViewingKey, walletForID } from '@railgun-community/wallet';
+import { createRailgunWallet, refreshBalances, setOnBalanceUpdateCallback, signWithWalletViewingKey, walletForID, pbkdf2 } from '@railgun-community/wallet';
 import type { AbstractWallet } from '@railgun-community/engine';
 import Logger from 'eleventh';
-import config from '../../common/config';
 import constants from '../../common/constants';
 import { TransactionType, type TransactionLog } from '../../common/types';
 import { setEngineLoggers, initializeEngine, creationBlockNumberMap, loadEngineProvider } from './engine';
@@ -18,10 +17,19 @@ const { chain } = NETWORK_CONFIG[NetworkName.Polygon];
 const events = new EventEmitter();
 
 let primaryWalletId: string | undefined;
+let primaryEncryptionKey: string | undefined;
+// fixing a salt value, since encryption key is derived from mnemonic which is by definition unique
+const salt = '0101010101010101'
+const iterations = 100000;
 
-const getWallet = async(mnemonic: string): Promise<AbstractWallet> => {
+const getWalletAndKey = async(mnemonic: string):
+ Promise<{
+  wallet: AbstractWallet,
+  encryptionKey: string,
+ }> => {
+  primaryEncryptionKey = await pbkdf2(mnemonic, salt, iterations);
   const railgunWalletInfo = await createRailgunWallet(
-    config.encryptionKey,
+    primaryEncryptionKey,
     mnemonic,
     creationBlockNumberMap,
   );
@@ -30,7 +38,7 @@ const getWallet = async(mnemonic: string): Promise<AbstractWallet> => {
   }
   const wallet = walletForID(railgunWalletInfo.id);
   await refreshBalances(chain, [railgunWalletInfo.id]);
-  return wallet;
+  return {wallet, encryptionKey: primaryEncryptionKey};
 };
 
 const getPrimaryWallet = (): AbstractWallet => {
@@ -40,12 +48,13 @@ const getPrimaryWallet = (): AbstractWallet => {
   return walletForID(primaryWalletId);
 };
 
+
 const sweep = async(from: string, amount: bigint): Promise<void> => {
   const wallet = walletForID(from);
   const to = getPrimaryWallet().getAddress();
   const memoText = `sweep:${wallet.getAddress()}`;
   Logger.info('Sweeping funds from redemption wallet', { from, to, amount: amount.toString() });
-  await sendTransfer(from, to, memoText, amount);
+  await sendTransfer(from, encryptionKey, to, memoText, amount);
 };
 
 const onBalanceUpdateCallback = (
@@ -131,17 +140,19 @@ const initialize = async(): Promise<void> => {
 
 const withdraw = async(
   mnemonic: string,
+  encryptionKey: string,
   amount: bigint,
   manifoldUser: string,
 ): Promise<void> => {
   const wallet = getPrimaryWallet();
   const to = constants.RAILGUN.BOT_ADDRESS;
   const memoText = `withdraw:${manifoldUser}`;
-  await sendTransfer(wallet.id, to, memoText, amount);
+  await sendTransfer(wallet.id, encryptionKey, to, memoText, amount);
 };
 
 const bet = async(
   mnemonic: string,
+  encryptionKey: string,
   amount: bigint,
   marketUrl: string,
   prediction: string,
@@ -156,8 +167,9 @@ const bet = async(
     }) !== undefined
   ));
   const nonce = betTransactions.length + 1;
+
   const redemptionWallet = await createRailgunWallet(
-    config.encryptionKey,
+    encryptionKey,
     mnemonic,
     creationBlockNumberMap,
     nonce,
@@ -169,11 +181,12 @@ const bet = async(
     prediction,
     redemptionAddress,
   ].join('::');
-  await sendTransfer(wallet.id, to, memoText, amount);
+  await sendTransfer(wallet.id, encryptionKey, to, memoText, amount);
 };
 
 const getRedemptionWalletId = async(
   mnemonic: string,
+  encryptionKey: string,
   address: string,
 ): Promise<string> => {
   const primary = getPrimaryWallet();
@@ -182,7 +195,7 @@ const getRedemptionWalletId = async(
   for (let nonce = 1; nonce <= maxNonce; nonce += 1) {
     // eslint-disable-next-line no-await-in-loop
     const wallet = await createRailgunWallet(
-      config.encryptionKey,
+      encryptionKey,
       mnemonic,
       creationBlockNumberMap,
       nonce,
@@ -196,9 +209,14 @@ const getRedemptionWalletId = async(
 
 const signRedemption = async(
   mnemonic: string,
+  encryptionKey: string,
   redemptionAddress: string,
 ): Promise<string> => {
-  const walletId = await getRedemptionWalletId(mnemonic, redemptionAddress);
+  const walletId = await getRedemptionWalletId(
+    mnemonic,
+    encryptionKey,
+    redemptionAddress,
+  );
   const signature = await signWithWalletViewingKey(
     walletId,
     REDEEM_MESSAGE_HEX,
@@ -208,9 +226,10 @@ const signRedemption = async(
 
 export default {
   initialize,
-  getWallet,
+  getWalletAndKey,
   events,
   withdraw,
   bet,
   signRedemption,
+  primaryEncryptionKey,
 };

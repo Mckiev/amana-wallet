@@ -2,7 +2,7 @@ import type { FunctionComponent } from 'react';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { getBetAmount, getBetMarketUrl, getBetPrediction, getBetStatus, getMnemonic } from '../../redux/selectors';
+import { getBetAmount, getBetMarketUrl, getBetPrediction, getBetStatus, getMnemonic, getEncryptionKey } from '../../redux/selectors';
 import ipcRequest from '../../IpcRequest';
 import { BetActions, BetStatus } from '../../redux/slices/bet';
 import Modal from '../Modal';
@@ -11,6 +11,7 @@ import styles from './index.scss';
 const BetModal: FunctionComponent = () => {
   const dispatch = useDispatch();
   const mnemonic = useSelector(getMnemonic);
+  const encryptionKey = useSelector(getEncryptionKey);
   const betStatus = useSelector(getBetStatus);
   const amount = useSelector(getBetAmount);
   const marketUrl = useSelector(getBetMarketUrl);
@@ -20,7 +21,11 @@ const BetModal: FunctionComponent = () => {
       toast('Bet failed: missing mnemonic');
       return;
     }
-    ipcRequest.bet(mnemonic, amount, marketUrl, prediction)
+    if (encryptionKey === undefined) {
+      toast('Bet failed: missing encryption key');
+      return;
+    }
+    ipcRequest.bet(mnemonic, encryptionKey, amount, marketUrl, prediction)
       .catch((e) => {
         toast(`Bet failed: ${e}`);
       });
@@ -28,7 +33,7 @@ const BetModal: FunctionComponent = () => {
     // TODO: Do not toast until the main process has
     // actually submitted the proof
     toast('Bet submitted');
-  }, [dispatch, mnemonic, amount, marketUrl, prediction]);
+  }, [dispatch, mnemonic, encryptionKey, amount, marketUrl, prediction]);
   const onCancel = useCallback(() => {
     dispatch(BetActions.cancelBet());
   }, [dispatch]);

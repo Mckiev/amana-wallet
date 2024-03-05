@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export type AccountState = {
   mnemonic?: string;
   primaryAddress?: string;
+  encryptionKey?: string;
   balance: string;
   isImporting: boolean;
 };
@@ -11,6 +12,7 @@ export type AccountState = {
 const initialState: AccountState = {
   mnemonic: undefined,
   primaryAddress: undefined,
+  encryptionKey: undefined,
   balance: '0',
   isImporting: false,
 };
@@ -18,6 +20,7 @@ const initialState: AccountState = {
 type ImportAccountAction = PayloadAction<{
   mnemonic: string;
   primaryAddress: string;
+  encryptionKey: string;
 }>;
 
 type UpdateBalanceAction = PayloadAction<string>;
@@ -30,9 +33,10 @@ const accountSlice = createSlice({
       state.isImporting = true;
     },
     importAccount: (state, action: ImportAccountAction) => {
-      const { mnemonic, primaryAddress } = action.payload;
+      const { mnemonic, primaryAddress, encryptionKey } = action.payload;
       state.mnemonic = mnemonic;
       state.primaryAddress = primaryAddress;
+      state.encryptionKey = encryptionKey;
       state.isImporting = false;
     },
     updateBalance: (state, action: UpdateBalanceAction) => {

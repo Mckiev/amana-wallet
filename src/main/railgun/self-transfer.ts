@@ -14,13 +14,13 @@ import {
 } from '@railgun-community/wallet';
 import { parseUnits } from 'ethers';
 import Logger from 'eleventh';
-import config from '../../common/config';
 import constants from '../../common/constants';
 
 const { chain } = NETWORK_CONFIG[NetworkName.Polygon];
 
 export async function sendTransfer(
   fromWalletId: string,
+  encryptionKey: string,
   recipientAddress: string,
   memoText: string,
   amount: bigint,
@@ -53,12 +53,13 @@ export async function sendTransfer(
 
   // Need to refresh balances, or wallet may try to spend already spent UTXOs.
   await refreshBalances(chain, [fromWalletId]);
+  
 
   const { gasEstimate } = await gasEstimateForUnprovenTransfer(
     TXIDVersion.V2_PoseidonMerkle,
     NetworkName.Polygon,
     fromWalletId,
-    config.encryptionKey,
+    encryptionKey,
     memoText,
     erc20AmountRecipients,
     [], // nftAmountRecipients
@@ -85,7 +86,7 @@ export async function sendTransfer(
     TXIDVersion.V2_PoseidonMerkle,
     NetworkName.Polygon,
     fromWalletId,
-    config.encryptionKey,
+    encryptionKey,
     showSenderAddressToRecipient,
     memoText,
     erc20AmountRecipients,

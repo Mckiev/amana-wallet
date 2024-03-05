@@ -14,6 +14,10 @@ export const getIsImporting = createSelector(
   getAccount,
   account => account.isImporting,
 );
+export const getEncryptionKey = createSelector(
+  getAccount,
+  account => account.encryptionKey,
+);
 
 export const getMnemonic = createSelector(
   getAccount,
