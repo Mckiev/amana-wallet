@@ -25,7 +25,7 @@ const ipcRequest = {
     if (!isObjectRecord(response)) {
       throw new Error('Invalid response');
     }
-    const {railgunAddress, encryptionKey} = response;
+    const { railgunAddress, encryptionKey } = response;
     if (typeof railgunAddress !== 'string') {
       throw new Error('Invalid railgun address');
     }

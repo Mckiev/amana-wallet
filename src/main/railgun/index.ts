@@ -8,6 +8,7 @@ import constants from '../../common/constants';
 import { TransactionType, type TransactionLog } from '../../common/types';
 import { setEngineLoggers, initializeEngine, creationBlockNumberMap, loadEngineProvider } from './engine';
 import { sendTransfer } from './self-transfer';
+import { combineSlices } from '@reduxjs/toolkit';
 
 // Hex value of message string: "Redeem AMANA Bet"
 const REDEEM_MESSAGE_HEX = '52656465656d20414d414e4120426574';
@@ -18,15 +19,16 @@ const events = new EventEmitter();
 
 let primaryWalletId: string | undefined;
 let primaryEncryptionKey: string | undefined;
-// fixing a salt value, since encryption key is derived from mnemonic which is by definition unique
-const salt = '0101010101010101'
+// fixing a salt value, since encryption key is derived
+// from mnemonic which is by definition unique
+const salt = '0101010101010101';
 const iterations = 100000;
 
 const getWalletAndKey = async(mnemonic: string):
- Promise<{
-  wallet: AbstractWallet,
-  encryptionKey: string,
- }> => {
+Promise<{
+  wallet: AbstractWallet;
+  encryptionKey: string;
+}> => {
   primaryEncryptionKey = await pbkdf2(mnemonic, salt, iterations);
   const railgunWalletInfo = await createRailgunWallet(
     primaryEncryptionKey,
@@ -38,7 +40,7 @@ const getWalletAndKey = async(mnemonic: string):
   }
   const wallet = walletForID(railgunWalletInfo.id);
   await refreshBalances(chain, [railgunWalletInfo.id]);
-  return {wallet, encryptionKey: primaryEncryptionKey};
+  return { wallet, encryptionKey: primaryEncryptionKey };
 };
 
 const getPrimaryWallet = (): AbstractWallet => {
@@ -48,9 +50,16 @@ const getPrimaryWallet = (): AbstractWallet => {
   return walletForID(primaryWalletId);
 };
 
+const getEncryptionKey = (): string => {
+  if (primaryEncryptionKey === undefined) {
+    throw new Error('Encryption key is undefined');
+  }
+  return primaryEncryptionKey;
+};
 
 const sweep = async(from: string, amount: bigint): Promise<void> => {
   const wallet = walletForID(from);
+  const encryptionKey = getEncryptionKey();
   const to = getPrimaryWallet().getAddress();
   const memoText = `sweep:${wallet.getAddress()}`;
   Logger.info('Sweeping funds from redemption wallet', { from, to, amount: amount.toString() });
@@ -125,6 +134,7 @@ const onBalanceUpdateCallback = (
         });
       }
     });
+    
     if (isPrimaryWallet) {
       events.emit('transactions', transactionLogs);
     }
@@ -231,5 +241,4 @@ export default {
   withdraw,
   bet,
   signRedemption,
-  primaryEncryptionKey,
 };

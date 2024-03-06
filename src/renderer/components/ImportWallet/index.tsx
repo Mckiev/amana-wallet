@@ -15,7 +15,7 @@ const ImportWallet: FunctionComponent = () => {
   const onClick = useCallback(async() => {
     dispatch(AccountActions.beginImporting());
     const [
-      primaryAddress, 
+      primaryAddress,
       encryptionKey,
     ] = await IpcRequest.railgunAddressAndKey(mnemonic);
     dispatch(AccountActions.importAccount({

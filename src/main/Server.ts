@@ -13,16 +13,22 @@ const initialize = (): void => {
   });
 
   ipcMain.handle(
-    IpcChannel.RailgunAddressAndKey, 
+    IpcChannel.RailgunAddressAndKey,
     async(e, mnemonic: string) => {
-      const {wallet, encryptionKey} = await Railgun.getWalletAndKey(mnemonic);
-      return {railgunAddress: wallet.getAddress(), encryptionKey};
+      const { wallet, encryptionKey } = await Railgun.getWalletAndKey(mnemonic);
+      return { railgunAddress: wallet.getAddress(), encryptionKey };
     }
   );
 
   ipcMain.handle(
     IpcChannel.Withdraw,
-    async(e, mnemonic: string, encryptionKey: string, amount: bigint, manifoldUser: string) => {
+    async(
+      e,
+      mnemonic: string,
+      encryptionKey: string,
+      amount: bigint,
+      manifoldUser: string
+    ) => {
       await Railgun.withdraw(mnemonic, encryptionKey, amount, manifoldUser);
     }
   );
@@ -37,7 +43,13 @@ const initialize = (): void => {
       marketUrl: string,
       prediction: string,
     ) => {
-      await Railgun.bet(mnemonic, encryptionKey, amount, marketUrl, prediction);
+      await Railgun.bet(
+        mnemonic,
+        encryptionKey,
+        amount,
+        marketUrl,
+        prediction
+      );
     }
   );
 
