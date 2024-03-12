@@ -4,11 +4,12 @@ import { NETWORK_CONFIG, NetworkName } from '@railgun-community/shared-models';
 import { createRailgunWallet, refreshBalances, setOnBalanceUpdateCallback, signWithWalletViewingKey, walletForID, pbkdf2 } from '@railgun-community/wallet';
 import type { AbstractWallet } from '@railgun-community/engine';
 import Logger from 'eleventh';
+import { combineSlices } from '@reduxjs/toolkit';
+import { InfuraProvider } from 'ethers';
 import constants from '../../common/constants';
 import { TransactionType, type TransactionLog } from '../../common/types';
 import { setEngineLoggers, initializeEngine, creationBlockNumberMap, loadEngineProvider } from './engine';
 import { sendTransfer } from './self-transfer';
-import { combineSlices } from '@reduxjs/toolkit';
 
 // Hex value of message string: "Redeem AMANA Bet"
 const REDEEM_MESSAGE_HEX = '52656465656d20414d414e4120426574';
@@ -81,9 +82,14 @@ const onBalanceUpdateCallback = (
     const wallet = walletForID(e.railgunWalletID);
     const transactions = await wallet.getTransactionHistory(chain, undefined);
     const transactionLogs: TransactionLog[] = [];
-    transactions.forEach((transaction) => {
+    for (const transaction of transactions) {
       if (typeof transaction.timestamp !== 'number') {
-        return;
+        const provider = new InfuraProvider(137);
+        // eslint-disable-next-line no-await-in-loop
+        const block = await provider.getBlock(transaction.blockNumber);
+        // Use the block's timestamp if available
+        // Otherwise, revert to the current time (not ideal, but better than 0)
+        transaction.timestamp = block?.timestamp ?? Date.now() / 1000;
       }
       const timestamp = Math.floor(transaction.timestamp * 1000);
       if (transaction.receiveTokenAmounts.length > 0) {
@@ -133,8 +139,8 @@ const onBalanceUpdateCallback = (
           memoText,
         });
       }
-    });
-    
+    }
+
     if (isPrimaryWallet) {
       events.emit('transactions', transactionLogs);
     }
