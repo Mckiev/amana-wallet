@@ -63,7 +63,7 @@ const sweep = async(from: string, amount: bigint): Promise<void> => {
   const to = getPrimaryWallet().getAddress();
   const memoText = `sweep:${wallet.getAddress()}`;
   Logger.info('Sweeping funds from redemption wallet', { from, to, amount: amount.toString() });
-  await sendTransfer(from, encryptionKey, to, memoText, amount);
+  await sendTransfer(from, encryptionKey, to, memoText, amount, false);
 };
 
 const onBalanceUpdateCallback = (
