@@ -4,7 +4,6 @@ import { NETWORK_CONFIG, NetworkName } from '@railgun-community/shared-models';
 import { createRailgunWallet, refreshBalances, setOnBalanceUpdateCallback, signWithWalletViewingKey, walletForID, pbkdf2 } from '@railgun-community/wallet';
 import type { AbstractWallet } from '@railgun-community/engine';
 import Logger from 'eleventh';
-import { combineSlices } from '@reduxjs/toolkit';
 import { InfuraProvider } from 'ethers';
 import constants from '../../common/constants';
 import { TransactionType, type TransactionLog } from '../../common/types';
