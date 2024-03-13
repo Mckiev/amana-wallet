@@ -39,10 +39,14 @@ const GenerateWallet: FunctionComponent = () => {
       setStep(Step.Import);
     } else {
       dispatch(AccountActions.beginImporting());
-      const primaryAddress: string = await IpcRequest.railgunAddress(mnemonic);
+      const [
+        primaryAddress,
+        encryptionKey,
+      ] = await IpcRequest.railgunAddressAndKey(mnemonic);
       dispatch(AccountActions.importAccount({
         mnemonic,
         primaryAddress,
+        encryptionKey,
       }));
     }
   }, [dispatch, step, mnemonic]);

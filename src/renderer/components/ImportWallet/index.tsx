@@ -14,10 +14,14 @@ const ImportWallet: FunctionComponent = () => {
   }, []);
   const onClick = useCallback(async() => {
     dispatch(AccountActions.beginImporting());
-    const primaryAddress: string = await IpcRequest.railgunAddress(mnemonic);
+    const [
+      primaryAddress,
+      encryptionKey,
+    ] = await IpcRequest.railgunAddressAndKey(mnemonic);
     dispatch(AccountActions.importAccount({
       mnemonic,
       primaryAddress,
+      encryptionKey,
     }));
   }, [dispatch, mnemonic]);
   return (

@@ -2,6 +2,39 @@
   border: 1px solid black;
   border-radius: 0.5em;
   padding: 1em;
+  overflow-y: scroll;
+  max-height: 500px;
+
+  background:
+    /* Shadow Cover TOP */
+    linear-gradient(
+      white 30%,
+      rgba(255, 255, 255, 0)
+    ) center top,
+
+    /* Shadow Cover BOTTOM */
+    linear-gradient(
+      rgba(255, 255, 255, 0),
+      white 70%
+    ) center bottom,
+
+    /* Straight Shadow TOP */
+    linear-gradient(
+      to bottom,
+      rgba(0, 0, 0, 0.2),
+      rgba(0, 0, 0, 0)
+    ) center top,
+
+    /* Straight Shadow BOTTOM */
+    linear-gradient(
+      to top,
+      rgba(0, 0, 0, 0.2),
+      rgba(0, 0, 0, 0)
+    ) center bottom;
+
+  background-repeat: no-repeat;
+  background-size: 100% 40px, 100% 40px, 100% 24px, 100% 24px;
+  background-attachment: local, local, scroll, scroll;
 
   &:nth-child(5) {
     grid-column-start: 1;
