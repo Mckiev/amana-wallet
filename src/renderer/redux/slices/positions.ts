@@ -14,14 +14,24 @@ const initialState: PositionsState = {
 type AddPositionAction = PayloadAction<Position[]>;
 type BeginRedeemingAction = PayloadAction<string>;
 
+const isPriorityBetState = (state: BetState): boolean => (
+  state === BetState.Placed || state === BetState.Redeeming
+);
+
 const positionsSlice = createSlice({
   name: 'positions',
   initialState,
   reducers: {
     setPositions: (state, action: AddPositionAction) => {
-      state.positions = action.payload.sort((a, b) => (
-        b.timestamp - a.timestamp
-      ));
+      state.positions = action.payload.sort((a, b) => {
+        if (isPriorityBetState(a.state) && !isPriorityBetState(b.state)) {
+          return -1;
+        }
+        if (isPriorityBetState(b.state) && !isPriorityBetState(a.state)) {
+          return 1;
+        }
+        return b.timestamp - a.timestamp;
+      });
     },
     beginRedeeming: (state, action: BeginRedeemingAction) => {
       state.redeemingPositionId = action.payload;
