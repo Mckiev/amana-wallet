@@ -1,4 +1,3 @@
-import path from 'node:path';
 import { app, screen as electronScreen, BrowserWindow } from 'electron';
 import Logger from 'eleventh';
 
@@ -20,7 +19,7 @@ const initialize = async(): Promise<void> => {
         contextIsolation: false,
       },
     });
-    await mainWindow.loadFile(path.join(__dirname, 'renderer/index.html'));
+    await mainWindow.loadFile('webpack-dist/src/main/renderer/index.html');
     // mainWindow.webContents.openDevTools()
   };
 

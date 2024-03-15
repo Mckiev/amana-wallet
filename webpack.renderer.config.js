@@ -13,7 +13,7 @@ module.exports = () => {
     entry: './src/renderer/index.ts',
     output: {
       filename: 'bundle.js',
-      path: path.resolve(__dirname, 'dist/src/main/renderer'),
+      path: path.resolve(__dirname, 'webpack-dist/src/main/renderer'),
       publicPath: './',
     },
     target: 'electron-renderer',
@@ -67,7 +67,7 @@ module.exports = () => {
         ],
       }),
       new HtmlWebpackPlugin({
-        template: 'src/renderer/index.html'
+        template: 'src/renderer/index.html',
       }),
     ],
   };

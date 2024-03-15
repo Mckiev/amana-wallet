@@ -1,3 +1,5 @@
+import path from 'node:path';
+import { app } from 'electron';
 import type { SnarkJSGroth16 } from '@railgun-community/wallet';
 import { getProver, loadProvider, setLoggers, startRailgunEngine } from '@railgun-community/wallet';
 import type { FallbackProviderJsonConfig } from '@railgun-community/shared-models';
@@ -36,14 +38,16 @@ export const initializeEngine = async(): Promise<void> => {
   const walletSource = 'AMANA RAILGUN';
 
   // LevelDOWN compatible database for storing encrypted wallets.
-  const dbPath = 'engine.db';
+  const appDataPath = app.getPath('appData');
+  const dbPath = path.join(appDataPath, 'amanawallet-engine');
   const db = new Level(dbPath);
 
   // Whether to forward Engine debug logs to Logger.
   const shouldDebug = true;
 
   // Persistent store for downloading large artifact files required by Engine.
-  const artifactStore = createArtifactStore('.Artifacts');
+  const artifactPath = path.join(appDataPath, 'amanawallet-artifacts');
+  const artifactStore = createArtifactStore(artifactPath);
 
   // Whether to download native C++ or web-assembly artifacts.
   // True for mobile. False for nodejs and browser.
