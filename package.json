@@ -4,17 +4,16 @@
   "description": "The front-end wallet for AMANA",
   "main": "index.js",
   "scripts": {
+    "build": "rm -rf webpack-dist && webpack",
     "rebuild": "electron-rebuild -o leveldown",
     "pack:mac": "electron-builder --mac",
     "pack:windows": "electron-builder --win",
     "pack:linux": "electron-builder --linux",
-    "build": "rm -rf webpack-dist && webpack",
     "start": "electron webpack-dist/index.js",
     "dev": "npm run build && npm start",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
-    "asar:extract": "asar extract dist/mac/amana-wallet.app/Contents/Resources/app.asar extracted-asar",
-    "fullbuild": "rm -rf dist && rm -rf webpack-dist && rm -rf extracted-asar && npm run build && npm run pack:mac && npm run asar:extract"
+    "fullbuild": "rm -rf dist && rm -rf webpack-dist && npm run build && npm run pack:mac"
   },
   "keywords": [],
   "author": "",
@@ -68,7 +67,6 @@
     "@types/snarkjs": "0.7.8",
     "@typescript-eslint/eslint-plugin": "6.20.0",
     "@typescript-eslint/parser": "6.20.0",
-    "asar": "3.2.0",
     "copy-webpack-plugin": "12.0.2",
     "css-loader": "6.9.1",
     "electron": "29.1.4",
