@@ -12,7 +12,7 @@ const ImportWallet: FunctionComponent = () => {
     e.preventDefault();
     setMnemonic(e.target.value);
   }, []);
-  const onClick = useCallback(async() => {
+  const onLogin = useCallback(async() => {
     dispatch(AccountActions.beginImporting());
     const [
       primaryAddress,
@@ -24,17 +24,25 @@ const ImportWallet: FunctionComponent = () => {
       encryptionKey,
     }));
   }, [dispatch, mnemonic]);
+  const onCreate = useCallback(() => {
+    dispatch(AccountActions.beginGenerating());
+  }, [dispatch]);
+  const noMnemonicText = "Don't have a mnemonic?";
   return (
     <div className={styles.importWallet}>
       <h2>Import Wallet</h2>
-      <label htmlFor="importMnemonic">Mnemonic:</label>
       <textarea
         name="importMnemonic"
         value={mnemonic}
         onChange={onChange}
+        placeholder="Enter your mnemonic here..."
         rows={4}
       />
-      <button type="button" onClick={onClick}>Import</button>
+      <button type="button" onClick={onLogin}>Import</button>
+      <p>{noMnemonicText}</p>
+      <p>
+        <a onClick={onCreate}>Create new wallet</a>
+      </p>
     </div>
   );
 };

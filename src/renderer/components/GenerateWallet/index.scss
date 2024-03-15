@@ -2,5 +2,14 @@
   flex: 1;
   border: 1px solid #aaaaaa;
   border-radius: 0.5em;
-  padding: 2em;
+  padding: 2em 10%;
+
+  button {
+    padding: 0.5em 2em;
+    font-size: 1em;
+
+    &:first-of-type {
+      margin-right: 1em;
+    }
+  }
 }
