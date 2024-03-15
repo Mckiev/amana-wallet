@@ -1,4 +1,5 @@
 import path from 'node:path';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { app } from 'electron';
 import type { SnarkJSGroth16 } from '@railgun-community/wallet';
 import { getProver, loadProvider, setLoggers, startRailgunEngine } from '@railgun-community/wallet';

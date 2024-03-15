@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { ipcMain } from 'electron';
 import { generateMnemonic } from 'bip39';
 import { IpcChannel } from '../common/ipcChannels';

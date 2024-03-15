@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { app, screen as electronScreen, BrowserWindow } from 'electron';
 import Logger from 'eleventh';
 
