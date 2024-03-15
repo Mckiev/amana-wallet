@@ -4,7 +4,8 @@
   "description": "The front-end wallet for AMANA",
   "main": "index.js",
   "scripts": {
-    "build": "rm -rf webpack-dist && webpack",
+    "clean": "rm -rf dist",
+    "build": "webpack",
     "rebuild": "electron-rebuild -o leveldown",
     "pack:mac": "electron-builder --mac",
     "pack:windows": "electron-builder --win",
