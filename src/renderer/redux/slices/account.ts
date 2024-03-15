@@ -1,12 +1,20 @@
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
+export enum LoginState {
+  Entering = 'Entering',
+  Importing = 'Importing',
+  Generating = 'Generating',
+  Confirming = 'Confirming',
+  LoggedIn = 'LoggedIn',
+}
+
 export type AccountState = {
   mnemonic?: string;
   primaryAddress?: string;
   encryptionKey?: string;
   balance: string;
-  isImporting: boolean;
+  loginState: LoginState;
 };
 
 const initialState: AccountState = {
@@ -14,7 +22,7 @@ const initialState: AccountState = {
   primaryAddress: undefined,
   encryptionKey: undefined,
   balance: '0',
-  isImporting: false,
+  loginState: LoginState.Entering,
 };
 
 type ImportAccountAction = PayloadAction<{
@@ -23,6 +31,8 @@ type ImportAccountAction = PayloadAction<{
   encryptionKey: string;
 }>;
 
+type BeginConfirmationAction = PayloadAction<string>;
+
 type UpdateBalanceAction = PayloadAction<string>;
 
 const accountSlice = createSlice({
@@ -30,14 +40,21 @@ const accountSlice = createSlice({
   initialState,
   reducers: {
     beginImporting: (state) => {
-      state.isImporting = true;
+      state.loginState = LoginState.Importing;
     },
     importAccount: (state, action: ImportAccountAction) => {
       const { mnemonic, primaryAddress, encryptionKey } = action.payload;
       state.mnemonic = mnemonic;
       state.primaryAddress = primaryAddress;
       state.encryptionKey = encryptionKey;
-      state.isImporting = false;
+      state.loginState = LoginState.LoggedIn;
+    },
+    beginGenerating: (state) => {
+      state.loginState = LoginState.Generating;
+    },
+    beginConfirmation: (state, action: BeginConfirmationAction) => {
+      state.loginState = LoginState.Confirming;
+      state.mnemonic = action.payload;
     },
     updateBalance: (state, action: UpdateBalanceAction) => {
       state.balance = action.payload;

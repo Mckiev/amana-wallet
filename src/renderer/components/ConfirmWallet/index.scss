@@ -1,0 +1,22 @@
+.confirmWallet {
+  flex: 1;
+  border: 1px solid #aaaaaa;
+  border-radius: 0.5em;
+  padding: 2em 10%;
+
+  .mnemonic {
+    font-size: 1.35em;
+    border: 1px solid #aaaaaa;
+    padding: 0.25em 0.5em;
+    margin-bottom: 0;
+  }
+
+  .warning {
+    font-weight: bold;
+  }
+
+  button {
+    padding: 0.5em 2em;
+    font-size: 1em;
+  }
+}

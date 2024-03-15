@@ -1,10 +1,12 @@
 import type { FunctionComponent } from 'react';
 import React, { Fragment } from 'react';
 import { useSelector } from 'react-redux';
-import { getIsImporting, getIsLoggedIn } from '../../redux/selectors';
+import { getLoginState } from '../../redux/selectors';
 import ImportWallet from '../ImportWallet';
-import GenerateWallet from '../GenerateWallet';
 import Modal from '../Modal';
+import GenerateWallet from '../GenerateWallet';
+import ConfirmWallet from '../ConfirmWallet';
+import { LoginState } from '../../redux/slices/account';
 import styles from './index.scss';
 
 const importingContent = (
@@ -14,19 +16,18 @@ const importingContent = (
   </Fragment>
 );
 
-const loginContent = (
-  <Fragment>
-    <ImportWallet />
-    <GenerateWallet />
-  </Fragment>
-);
-
 const LoginModal: FunctionComponent = () => {
-  const isLoggedIn = useSelector(getIsLoggedIn);
-  const isImporting = useSelector(getIsImporting);
-  const content = isImporting ? importingContent : loginContent;
+  const loginState = useSelector(getLoginState);
+  const content = {
+    [LoginState.Entering]: <ImportWallet />,
+    [LoginState.Importing]: importingContent,
+    [LoginState.Generating]: <GenerateWallet />,
+    [LoginState.Confirming]: <ConfirmWallet />,
+    [LoginState.LoggedIn]: null,
+  }[loginState];
+
   return (
-    <Modal isOpen={!isLoggedIn}>
+    <Modal isOpen={loginState !== LoginState.LoggedIn}>
       <div className={styles.loginModal}>
         {content}
       </div>

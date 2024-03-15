@@ -10,10 +10,11 @@ const getAccount = (state: State): AccountState => (
   state.account
 );
 
-export const getIsImporting = createSelector(
+export const getLoginState = createSelector(
   getAccount,
-  account => account.isImporting,
+  account => account.loginState,
 );
+
 export const getEncryptionKey = createSelector(
   getAccount,
   account => account.encryptionKey,
@@ -39,11 +40,6 @@ export const getShortPrimaryAddress = createSelector(
   primaryAddress => (primaryAddress === undefined
     ? undefined
     : `${primaryAddress.slice(0, 8)}...${primaryAddress.slice(primaryAddress.length - 5)}`),
-);
-
-export const getIsLoggedIn = createSelector(
-  getPrimaryAddress,
-  primaryAddress => primaryAddress !== undefined,
 );
 
 export const getTransactions = (state: State): TransactionLog[] => (
