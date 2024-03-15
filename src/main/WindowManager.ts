@@ -24,9 +24,7 @@ const initialize = async(): Promise<void> => {
   };
 
   app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-      app.quit();
-    }
+    app.quit();
   });
 
   await app.whenReady();
