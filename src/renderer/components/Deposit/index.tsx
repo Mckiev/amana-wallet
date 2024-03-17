@@ -5,7 +5,7 @@ import CopyableAddress from '../CopyableAddress';
 
 const Deposit: FunctionComponent = () => {
   const text1 = 'Use the "Send" feature on Manifold to initiate a deposit. Enter ';
-  const text2 = 'AmanaBot';
+  const text2 = 'TestAmanaBot';
   const text3 = ' in the "To" field, the size of your deposit in the "Amount" field, and your address (';
   const text4 = ') in the "Message" field.';
   return (
