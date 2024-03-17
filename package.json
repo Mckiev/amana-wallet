@@ -30,13 +30,16 @@
         "target": "default",
         "arch": "universal"
       },
-      "identity": null
+      "identity": null,
+      "publish": "never"
     },
     "win": {
-      "target": "nsis"
+      "target": "nsis",
+      "publish": "never"
     },
     "linux": {
-      "target": "AppImage"
+      "target": "AppImage",
+      "publish": "never"
     }
   },
   "dependencies": {
