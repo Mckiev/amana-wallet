@@ -4,15 +4,41 @@
   "description": "The front-end wallet for AMANA",
   "main": "index.js",
   "scripts": {
+    "clean": "rm -rf dist",
+    "build": "webpack",
     "rebuild": "electron-rebuild -o leveldown",
-    "build": "rm -rf dist && webpack",
-    "start": "electron dist/index.js",
+    "pack:mac": "electron-builder --mac",
+    "pack:windows": "electron-builder --win",
+    "pack:linux": "electron-builder --linux",
+    "start": "electron index.js",
     "dev": "npm run build && npm start",
     "lint": "eslint src --ext .ts,.tsx",
-    "lint:fix": "eslint src --ext .ts,.tsx --fix"
+    "lint:fix": "eslint src --ext .ts,.tsx --fix",
+    "fullbuild": "rm -rf dist && rm -rf webpack-dist && npm run build && npm run pack:mac"
   },
   "keywords": [],
   "author": "",
+  "build": {
+    "appId": "amanawallet",
+    "files": [
+      "webpack-dist/**/*",
+      "index.js"
+    ],
+    "icon": "icon.png",
+    "mac": {
+      "target": {
+        "target": "default",
+        "arch": "universal"
+      },
+      "identity": null
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
   "dependencies": {
     "@railgun-community/shared-models": "6.3.0",
     "@railgun-community/wallet": "7.0.1",
@@ -21,7 +47,6 @@
     "bip39": "3.1.0",
     "buffer": "6.0.3",
     "classnames": "2.5.1",
-    "electron": "29.0.1",
     "eleventh": "1.1.0",
     "ethers": "6.7.10",
     "level": "8.0.1",
@@ -43,6 +68,8 @@
     "@typescript-eslint/parser": "6.20.0",
     "copy-webpack-plugin": "12.0.2",
     "css-loader": "6.9.1",
+    "electron": "29.1.4",
+    "electron-builder": "24.13.3",
     "eslint": "8.56.0",
     "eslint-config-principled": "1.1.1",
     "eslint-plugin-import": "2.29.1",

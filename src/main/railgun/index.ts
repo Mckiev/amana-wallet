@@ -146,8 +146,8 @@ const onBalanceUpdateCallback = (
   }
 );
 
-const initialize = async(): Promise<void> => {
-  await initializeEngine();
+const initialize = async(identifier: string): Promise<void> => {
+  await initializeEngine(identifier);
   await loadEngineProvider();
   setEngineLoggers();
   setOnBalanceUpdateCallback(onBalanceUpdateCallback);

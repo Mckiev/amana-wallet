@@ -1,4 +1,4 @@
-import path from 'node:path';
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { app, screen as electronScreen, BrowserWindow } from 'electron';
 import Logger from 'eleventh';
 
@@ -20,14 +20,12 @@ const initialize = async(): Promise<void> => {
         contextIsolation: false,
       },
     });
-    await mainWindow.loadFile(path.join(__dirname, 'renderer/index.html'));
+    await mainWindow.loadFile('webpack-dist/src/main/renderer/index.html');
     // mainWindow.webContents.openDevTools()
   };
 
   app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-      app.quit();
-    }
+    app.quit();
   });
 
   await app.whenReady();

@@ -1,0 +1,31 @@
+name: Windows
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-node@v3
+      with:
+        node-version: '18.19.0'
+
+    - name: Install
+      run: npm ci
+
+    - name: Build
+      run: npm run build
+
+    - name: Pack
+      run: npm run pack:windows
+    
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: windows-build
+        path: 'dist/*.exe'
