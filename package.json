@@ -10,7 +10,7 @@
     "pack:mac": "electron-builder --mac",
     "pack:windows": "electron-builder --win",
     "pack:linux": "electron-builder --linux",
-    "start": "electron webpack-dist/index.js",
+    "start": "electron index.js",
     "dev": "npm run build && npm start",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
@@ -24,6 +24,7 @@
       "webpack-dist/**/*",
       "index.js"
     ],
+    "icon": "icon.png",
     "mac": {
       "target": {
         "target": "default",
@@ -35,10 +36,7 @@
       "target": "nsis"
     },
     "linux": {
-      "target": [
-        "AppImage",
-        "deb"
-      ]
+      "target": "AppImage"
     }
   },
   "dependencies": {

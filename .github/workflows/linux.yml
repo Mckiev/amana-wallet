@@ -1,4 +1,4 @@
-name: Mac
+name: Linux
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -22,10 +22,10 @@ jobs:
       run: npm run build
 
     - name: Pack
-      run: npm run pack:mac
+      run: npm run pack:linux
     
     - name: Upload Artifact
       uses: actions/upload-artifact@v4
       with:
-        name: mac-build
-        path: 'dist/*.dmg'
+        name: linux-build
+        path: 'dist/*.AppImage'
