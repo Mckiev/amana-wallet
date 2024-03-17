@@ -31,15 +31,15 @@
         "arch": "universal"
       },
       "identity": null,
-      "publish": "never"
+      "publish": null
     },
     "win": {
       "target": "nsis",
-      "publish": "never"
+      "publish": null
     },
     "linux": {
       "target": "AppImage",
-      "publish": "never"
+      "publish": null
     }
   },
   "dependencies": {
