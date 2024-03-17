@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { ipcMain } from 'electron';
 import { generateMnemonic } from 'bip39';
+import { pbkdf2 } from '@railgun-community/wallet';
 import { IpcChannel } from '../common/ipcChannels';
 import type { TransactionLog } from '../common/types';
 import constants from '../common/constants';
@@ -16,8 +17,15 @@ const initialize = (): void => {
   ipcMain.handle(
     IpcChannel.RailgunAddressAndKey,
     async(e, mnemonic: string) => {
+      const saltMessage = 'amana-wallet-identifier';
+      const salt = Buffer.from(saltMessage).toString('hex');
+      const iterations = 100000;
+      const identifier = (await pbkdf2(mnemonic, salt, iterations))
+        .slice(0, 16);
+      await Railgun.initialize(identifier);
       const { wallet, encryptionKey } = await Railgun.getWalletAndKey(mnemonic);
-      return { railgunAddress: wallet.getAddress(), encryptionKey };
+      const address = wallet.getAddress();
+      return { railgunAddress: address, encryptionKey };
     }
   );
 

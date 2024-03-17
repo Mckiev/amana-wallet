@@ -32,7 +32,7 @@ export const setEngineLoggers = (): void => {
   );
 };
 
-export const initializeEngine = async(): Promise<void> => {
+export const initializeEngine = async(identifier: string): Promise<void> => {
   // Name for your wallet implementation.
   // Encrypted and viewable in private transaction history.
   // Maximum of 16 characters, lowercase.
@@ -40,14 +40,14 @@ export const initializeEngine = async(): Promise<void> => {
 
   // LevelDOWN compatible database for storing encrypted wallets.
   const appDataPath = app.getPath('appData');
-  const dbPath = path.join(appDataPath, 'amanawallet-engine');
+  const dbPath = path.join(appDataPath, `amanawallet-${identifier}-engine`);
   const db = new Level(dbPath);
 
   // Whether to forward Engine debug logs to Logger.
   const shouldDebug = true;
 
   // Persistent store for downloading large artifact files required by Engine.
-  const artifactPath = path.join(appDataPath, 'amanawallet-artifacts');
+  const artifactPath = path.join(appDataPath, `amanawallet-${identifier}-artifacts`);
   const artifactStore = createArtifactStore(artifactPath);
 
   // Whether to download native C++ or web-assembly artifacts.
