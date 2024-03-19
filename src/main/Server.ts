@@ -2,11 +2,17 @@
 import { ipcMain } from 'electron';
 import { generateMnemonic } from 'bip39';
 import { pbkdf2 } from '@railgun-community/wallet';
+import debounce from 'lodash.debounce';
 import { IpcChannel } from '../common/ipcChannels';
 import type { TransactionLog } from '../common/types';
 import constants from '../common/constants';
 import Railgun from './railgun';
 import WindowManager from './WindowManager';
+
+const debouncedBalanceUpdate = debounce((balance: bigint) => {
+  const mainWindow = WindowManager.getMainWindow();
+  mainWindow?.webContents.send('Balance', balance);
+}, 12_500);
 
 const initialize = (): void => {
   ipcMain.handle(IpcChannel.Mnemonic, () => {
@@ -90,8 +96,7 @@ const initialize = (): void => {
   );
 
   Railgun.events.on('balance', (balance: bigint) => {
-    const mainWindow = WindowManager.getMainWindow();
-    mainWindow?.webContents.send('Balance', balance);
+    debouncedBalanceUpdate(balance);
   });
 
   Railgun.events.on('transactions', (transactions: TransactionLog) => {
