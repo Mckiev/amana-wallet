@@ -3,6 +3,9 @@ import type { RailgunBalancesEvent } from '@railgun-community/shared-models';
 import { NETWORK_CONFIG, NetworkName } from '@railgun-community/shared-models';
 import { createRailgunWallet, refreshBalances, setOnBalanceUpdateCallback, signWithWalletViewingKey, walletForID, pbkdf2 } from '@railgun-community/wallet';
 import type { AbstractWallet } from '@railgun-community/engine';
+import { ByteLength, formatToByteLength, nToHex, WalletNode } from '@railgun-community/engine';
+import { bech32m } from '@scure/base';
+import xor from 'buffer-xor';
 import Logger from 'eleventh';
 import { InfuraProvider } from 'ethers';
 import constants from '../../common/constants';
@@ -239,6 +242,49 @@ const signRedemption = async(
   return signature;
 };
 
+const DERIVATION_PATH_PREFIXES = {
+  SPENDING: "m/44'/1984'/0'/0'/",
+  VIEWING: "m/420'/1984'/0'/0'/",
+};
+const ADDRESS_LENGTH_LIMIT = 127;
+const PREFIX = '0zk';
+
+const mnemonicToAddress = async(mnemonic: string): Promise<string> => {
+  const index = 0;
+  const paths = {
+    spending: `${DERIVATION_PATH_PREFIXES.SPENDING}${index}'`,
+    viewing: `${DERIVATION_PATH_PREFIXES.VIEWING}${index}'`,
+  };
+  const nodes = {
+    spending: WalletNode.fromMnemonic(mnemonic).derive(paths.spending),
+    viewing: WalletNode.fromMnemonic(mnemonic).derive(paths.viewing),
+  };
+  const viewingPublicKeyPair = (await nodes.viewing.getViewingKeyPair());
+  const spendingPublicKey = nodes.spending.getSpendingKeyPair().pubkey[0];
+
+  const masterPublicKey = nToHex(spendingPublicKey, ByteLength.UINT_256, false);
+  const viewingPublicKey = formatToByteLength(
+    viewingPublicKeyPair.pubkey,
+    ByteLength.UINT_256,
+  );
+
+  // const masterPublicKey = spendingPublicKey.toString();
+  // const viewingPublicKey = viewingKeyPair.pubkey.toString();
+
+  const chainIDBuffer = Buffer.from('89', 'hex'); // 137 in hex
+  const railgunBuffer = Buffer.from('railgun', 'utf8');
+  const networkID = xor(chainIDBuffer, railgunBuffer).toString('hex');
+  const version = '01';
+  const addressString = `${version}${masterPublicKey}${networkID}${viewingPublicKey}`;
+  const addressBuffer = Buffer.from(addressString, 'hex');
+  const address = bech32m.encode(
+    PREFIX,
+    bech32m.toWords(addressBuffer),
+    ADDRESS_LENGTH_LIMIT,
+  );
+  return address;
+};
+
 export default {
   initialize,
   getWalletAndKey,
@@ -246,4 +292,5 @@ export default {
   withdraw,
   bet,
   signRedemption,
+  mnemonicToAddress,
 };

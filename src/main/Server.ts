@@ -23,11 +23,14 @@ const initialize = (): void => {
   ipcMain.handle(
     IpcChannel.RailgunAddressAndKey,
     async(e, mnemonic: string) => {
-      const saltMessage = 'amana-wallet-identifier';
-      const salt = Buffer.from(saltMessage).toString('hex');
-      const iterations = 100000;
-      const identifier = (await pbkdf2(mnemonic, salt, iterations))
-        .slice(0, 16);
+      console.log('mnemonic', mnemonic);
+      const identifier = await Railgun.mnemonicToAddress(mnemonic);
+      console.log('identifier', identifier);
+      // const saltMessage = 'amana-wallet-identifier';
+      // const salt = Buffer.from(saltMessage).toString('hex');
+      // const iterations = 100000;
+      // const identifier = (await pbkdf2(mnemonic, salt, iterations))
+      //   .slice(0, 16);
       await Railgun.initialize(identifier);
       const { wallet, encryptionKey } = await Railgun.getWalletAndKey(mnemonic);
       const address = wallet.getAddress();
