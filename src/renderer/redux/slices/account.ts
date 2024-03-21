@@ -4,7 +4,6 @@ import { createSlice } from '@reduxjs/toolkit';
 export enum LoginState {
   Entering = 'Entering',
   Importing = 'Importing',
-  Generating = 'Generating',
   Confirming = 'Confirming',
   LoggedIn = 'LoggedIn',
 }
@@ -31,8 +30,6 @@ type ImportAccountAction = PayloadAction<{
   encryptionKey: string;
 }>;
 
-type BeginConfirmationAction = PayloadAction<string>;
-
 type UpdateBalanceAction = PayloadAction<string>;
 
 const accountSlice = createSlice({
@@ -49,12 +46,8 @@ const accountSlice = createSlice({
       state.encryptionKey = encryptionKey;
       state.loginState = LoginState.LoggedIn;
     },
-    beginGenerating: (state) => {
-      state.loginState = LoginState.Generating;
-    },
-    beginConfirmation: (state, action: BeginConfirmationAction) => {
+    beginConfirmation: (state) => {
       state.loginState = LoginState.Confirming;
-      state.mnemonic = action.payload;
     },
     updateBalance: (state, action: UpdateBalanceAction) => {
       state.balance = action.payload;
