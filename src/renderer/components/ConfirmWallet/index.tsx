@@ -18,7 +18,7 @@ const ConfirmWallet: FunctionComponent = () => {
       const generatedMnemonic = await IpcRequest.mnemonic();
       setMnemonic(generatedMnemonic);
     };
-
+    // eslint-disable-next-line @typescript-eslint/no-floating-promises
     generateMnemonic();
   }, []);
 
