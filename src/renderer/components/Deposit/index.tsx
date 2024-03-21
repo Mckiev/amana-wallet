@@ -18,6 +18,7 @@ const Deposit: FunctionComponent = () => {
         <b><CopyableAddress /></b>
         {text4}
       </p>
+      <p> <b>Link</b> : https://manifold.markets/TestAmanaBot?tab=payments&a=1</p>
       <p>Takes ~ a minute for a transfer to arrive</p>
     </Panel>
   );
