@@ -4,14 +4,14 @@ import { useSelector } from 'react-redux';
 import { getLoginState } from '../../redux/selectors';
 import ImportWallet from '../ImportWallet';
 import Modal from '../Modal';
-import GenerateWallet from '../GenerateWallet';
 import ConfirmWallet from '../ConfirmWallet';
 import { LoginState } from '../../redux/slices/account';
 import styles from './index.scss';
 
 const importingContent = (
   <Fragment>
-    <h1>Importing wallet...</h1>
+    <h1>Importing wallet</h1>
+    <h2>May take a minute or two ...</h2>
     <div className={styles.spinner} />
   </Fragment>
 );
@@ -21,7 +21,6 @@ const LoginModal: FunctionComponent = () => {
   const content = {
     [LoginState.Entering]: <ImportWallet />,
     [LoginState.Importing]: importingContent,
-    [LoginState.Generating]: <GenerateWallet />,
     [LoginState.Confirming]: <ConfirmWallet />,
     [LoginState.LoggedIn]: null,
   }[loginState];

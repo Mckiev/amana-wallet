@@ -46,7 +46,7 @@ const Withdraw: FunctionComponent = () => {
 
   return (
     <Panel>
-      <h2>Withdraw</h2>
+      <h2>Withdraw to the Manifold</h2>
       <label htmlFor="manifoldUser">Manifold user: </label>
       <input
         type="text"

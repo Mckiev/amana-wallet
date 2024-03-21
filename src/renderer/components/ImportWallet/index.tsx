@@ -24,8 +24,9 @@ const ImportWallet: FunctionComponent = () => {
       encryptionKey,
     }));
   }, [dispatch, mnemonic]);
+
   const onCreate = useCallback(() => {
-    dispatch(AccountActions.beginGenerating());
+    dispatch(AccountActions.beginConfirmation());
   }, [dispatch]);
   const noMnemonicText = "Don't have a mnemonic?";
   return (
