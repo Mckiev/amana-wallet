@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { getMnemonic, getWithdrawalAmount, getWithdrawalManifoldUser, getWithdrawalStatus, getEncryptionKey } from '../../redux/selectors';
 import { WithdrawalActions, WithdrawalStatus } from '../../redux/slices/withdrawal';
 import Modal from '../Modal';
+import railgun from '../../railgun';
 
 const WithdrawalModal: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -22,11 +23,10 @@ const WithdrawalModal: FunctionComponent = () => {
       toast('Withdrawal failed: missing encryption key');
       return;
     }
-    // TODO
-    // ipcRequest.withdraw(mnemonic, encryptionKey, amount, manifoldUser)
-    //   .catch((e) => {
-    //     toast(`Withdrawal failed: ${e}`);
-    //   });
+    railgun.withdraw(mnemonic, encryptionKey, amount, manifoldUser)
+      .catch((e) => {
+        toast(`Withdrawal failed: ${e}`);
+      });
     dispatch(WithdrawalActions.confirmWithdrawal());
     // TODO: Do not toast until the main process has
     // actually submitted the proof

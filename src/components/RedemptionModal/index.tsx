@@ -5,6 +5,31 @@ import { toast } from 'react-toastify';
 import { getMnemonic, getRedeemingPosition, getEncryptionKey } from '../../redux/selectors';
 import Modal from '../Modal';
 import { PositionsActions } from '../../redux/slices/positions';
+import railgun from '../../railgun';
+import constants from '../../constants';
+
+const redeem = async(
+  mnemonic: string,
+  encryptionKey: string,
+  redemptionAddress: string,
+): Promise<void> => {
+  const signature = await railgun.signRedemption(
+    mnemonic,
+    encryptionKey,
+    redemptionAddress,
+  );
+  const endpoint = `${constants.RELAYER_HOST}/redeem`;
+  await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      redemptionAddress,
+      signature,
+    }),
+  });
+};
 
 const RedemptionModal: FunctionComponent = () => {
   const dispatch = useDispatch();
@@ -21,11 +46,10 @@ const RedemptionModal: FunctionComponent = () => {
     if (encryptionKey === undefined) {
       return;
     }
-    // TODO:
-    // ipcRequest.redeem(mnemonic, encryptionKey, position.redemptionAddress)
-    //   .catch((e) => {
-    //     toast(`Redemption request failed: ${e}`);
-    //   });
+    redeem(mnemonic, encryptionKey, position.redemptionAddress)
+      .catch((e) => {
+        toast(`Redemption request failed: ${e}`);
+      });
     toast('Redemption request submitted');
     dispatch(PositionsActions.completeRedeeming());
   }, [dispatch, mnemonic, encryptionKey, position]);

@@ -1,21 +1,19 @@
-import EventEmitter from 'events';
 import type { RailgunBalancesEvent } from '@railgun-community/shared-models';
 import { NETWORK_CONFIG, NetworkName } from '@railgun-community/shared-models';
 import { createRailgunWallet, refreshBalances, setOnBalanceUpdateCallback, signWithWalletViewingKey, walletForID, pbkdf2 } from '@railgun-community/wallet';
 import type { AbstractWallet } from '@railgun-community/engine';
 import { InfuraProvider } from 'ethers';
+import debounce from 'lodash.debounce';
 import constants from '../constants';
 import { TransactionType, type TransactionLog } from '../types';
 import { Logger } from '../logger';
-import { setEngineLoggers, initializeEngine, creationBlockNumberMap, loadEngineProvider } from './engine';
+import { initializeEngine, creationBlockNumberMap } from './engine';
 import { sendTransfer } from './self-transfer';
 
 // Hex value of message string: "Redeem AMANA Bet"
 const REDEEM_MESSAGE_HEX = '52656465656d20414d414e4120426574';
 
 const { chain } = NETWORK_CONFIG[NetworkName.Polygon];
-
-const events = new EventEmitter();
 
 let primaryWalletId: string | undefined;
 let primaryEncryptionKey: string | undefined;
@@ -66,6 +64,26 @@ const sweep = async(from: string, amount: bigint): Promise<void> => {
   await sendTransfer(from, encryptionKey, to, memoText, amount, false);
 };
 
+type BalanceUpdateHandler = (balance: bigint) => void;
+
+const balanceUpdateHandlers: BalanceUpdateHandler[] = [];
+
+const onBalanceUpdate = (balanceUpdateHandler: BalanceUpdateHandler): void => {
+  balanceUpdateHandlers.push(balanceUpdateHandler);
+};
+
+const debouncedBalanceUpdate = debounce((balance: bigint) => {
+  balanceUpdateHandlers.forEach(handler => handler(balance));
+}, 12_500);
+
+type TransactionsHandler = (transactions: TransactionLog[]) => void;
+
+const transactionsHandlers: TransactionsHandler[] = [];
+
+const onTransactions = (transactionsHandler: TransactionsHandler): void => {
+  transactionsHandlers.push(transactionsHandler);
+};
+
 const onBalanceUpdateCallback = (
   async(e: RailgunBalancesEvent): Promise<void> => {
     const isPrimaryWallet = e.railgunWalletID === primaryWalletId;
@@ -74,7 +92,7 @@ const onBalanceUpdateCallback = (
     ));
     const amanaBalance = amana?.amount ?? 0n;
     if (isPrimaryWallet) {
-      events.emit('balance', amanaBalance);
+      debouncedBalanceUpdate(amanaBalance);
     } else if (amanaBalance > 0n) {
       await sweep(e.railgunWalletID, amanaBalance);
     }
@@ -141,15 +159,13 @@ const onBalanceUpdateCallback = (
     }
 
     if (isPrimaryWallet) {
-      events.emit('transactions', transactionLogs);
+      transactionsHandlers.forEach(handler => handler(transactionLogs));
     }
   }
 );
 
 const initialize = async(): Promise<void> => {
   await initializeEngine();
-  await loadEngineProvider();
-  setEngineLoggers();
   setOnBalanceUpdateCallback(onBalanceUpdateCallback);
 };
 
@@ -248,7 +264,8 @@ const getAddressAndKey = async(mnemonic: string): Promise<[string, string]> => {
 export default {
   initialize,
   getAddressAndKey,
-  events,
+  onBalanceUpdate,
+  onTransactions,
   withdraw,
   bet,
   signRedemption,

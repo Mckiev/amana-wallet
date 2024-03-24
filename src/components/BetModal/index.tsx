@@ -5,6 +5,7 @@ import { toast } from 'react-toastify';
 import { getBetAmount, getBetMarketUrl, getBetPrediction, getBetStatus, getMnemonic, getEncryptionKey } from '../../redux/selectors';
 import { BetActions, BetStatus } from '../../redux/slices/bet';
 import Modal from '../Modal';
+import railgun from '../../railgun';
 import styles from './index.scss';
 
 const BetModal: FunctionComponent = () => {
@@ -24,11 +25,15 @@ const BetModal: FunctionComponent = () => {
       toast('Bet failed: missing encryption key');
       return;
     }
-    // TODO:
-    // ipcRequest.bet(mnemonic, encryptionKey, amount, marketUrl, prediction)
-    // .catch((e) => {
-    //   toast(`Bet failed: ${e}`);
-    // });
+    railgun.bet(
+      mnemonic,
+      encryptionKey,
+      amount,
+      marketUrl,
+      prediction
+    ).catch((e) => {
+      toast(`Bet failed: ${e}`);
+    });
     dispatch(BetActions.confirmBet());
     // TODO: Do not toast until the main process has
     // actually submitted the proof
