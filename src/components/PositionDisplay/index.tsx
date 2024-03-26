@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 import { BetState, type Position } from '../../types';
 import { PositionsActions } from '../../redux/slices/positions';
 import styles from './index.scss';
+import CopyableText from '../CopyableText';
 
 type Props = {
   position: Position;
@@ -19,7 +20,7 @@ const PositionDisplay: FunctionComponent<Props> = ({ position }) => {
       <div className={styles.value}>
         URL:
         {' '}
-        <a href={position.url} target="_blank" rel="noreferrer">{position.url}</a>
+        <CopyableText copyText={position.url} displayText={position.url} toastText="URL copied to clipboard" />
       </div>
       <div className={styles.value}>
         Prediction:
