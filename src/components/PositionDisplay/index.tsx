@@ -3,8 +3,8 @@ import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { BetState, type Position } from '../../types';
 import { PositionsActions } from '../../redux/slices/positions';
-import styles from './index.scss';
 import CopyableText from '../CopyableText';
+import styles from './index.scss';
 
 type Props = {
   position: Position;
@@ -18,31 +18,29 @@ const PositionDisplay: FunctionComponent<Props> = ({ position }) => {
   return (
     <div className={styles.positionDisplay}>
       <div className={styles.value}>
-        URL:
-        {' '}
-        <CopyableText copyText={position.url} displayText={position.url} toastText="URL copied to clipboard" />
+        <CopyableText copyText={position.url} displayText={position.url} toastText="URL copied to clipboard **Open in Private Mode**" />
       </div>
       <div className={styles.value}>
         Prediction:
         {' '}
-        {position.prediction}
+        <b>{position.prediction}</b>
       </div>
       <div className={styles.value}>
         Shares:
         {' '}
-        {position.shares}
+        <b>{position.shares}</b>
       </div>
       <div className={styles.value}>
         Total purchase price:
         {' '}
-        {position.purchasePrice}
+        <b>{position.purchasePrice}</b>
         {' '}
         AMANA
       </div>
       <div className={styles.value}>
         Status:
         {' '}
-        {position.state}
+        <b>{position.state}</b>
       </div>
       <div className={styles.value}>
         Timestamp:
