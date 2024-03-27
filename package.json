@@ -6,10 +6,9 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "webpack",
-    "dev": "webpack serve",
+    "start": "webpack serve",
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
-    "fullbuild": "rm -rf dist && rm -rf webpack-dist && npm run build && npm run pack:mac"
   },
   "keywords": [],
   "author": "",
