@@ -10,6 +10,13 @@ type Props = {
   position: Position;
 };
 
+const ToastMsg = () => (
+  <div>
+    <p>URL copied to clipboard</p>
+    <p><b>We encourage opening in private mode (logged out of manifold)</b></p>
+  </div>
+);
+
 const PositionDisplay: FunctionComponent<Props> = ({ position }) => {
   const dispatch = useDispatch();
   const onClick = useCallback(() => {
@@ -18,7 +25,7 @@ const PositionDisplay: FunctionComponent<Props> = ({ position }) => {
   return (
     <div className={styles.positionDisplay}>
       <div className={styles.value}>
-        <CopyableText copyText={position.url} displayText={position.url} toastText="URL copied to clipboard **Open in Private Mode**" />
+        <CopyableText copyText={position.url} displayText={position.url} toastText={<ToastMsg />} />
       </div>
       <div className={styles.value}>
         Prediction:
