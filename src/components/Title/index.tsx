@@ -13,7 +13,7 @@ const Title: FunctionComponent = () => {
   return (
     <div className={styles.title}>
       <h1>AMANA Wallet</h1>
-      <h2><CopyableText copyText={primaryAddress} displayText={shortAddress} toastText='Primary Address copied to clipboard'  /></h2>
+      <h2><CopyableText copyText={primaryAddress} displayText={shortAddress} toastText="Primary Address copied to clipboard" /></h2>
       <h2>
         Balance:
         {balance.toString()}
