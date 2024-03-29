@@ -10,10 +10,10 @@ import { LogsActions } from './redux/slices/logs';
 
 const handleBalanceUpdate = (balance: bigint): void => {
   const state = store.getState();
+  const action = AccountActions.updateBalance(balance.toString());
+  store.dispatch(action);
   if (state.account.balance !== balance.toString()) {
-    const action = AccountActions.updateBalance(balance.toString());
     toast(`Balance updated to ${balance}`);
-    store.dispatch(action);
   }
 };
 

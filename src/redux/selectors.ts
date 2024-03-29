@@ -34,6 +34,11 @@ export const getBalance = createSelector(
   account => BigInt(account.balance),
 );
 
+export const getBalanceRefreshing = createSelector(
+  getAccount,
+  account => account.balanceRefreshing,
+);
+
 export const getShortPrimaryAddress = createSelector(
   getPrimaryAddress,
   primaryAddress => (primaryAddress === undefined

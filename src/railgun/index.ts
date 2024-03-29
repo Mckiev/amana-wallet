@@ -261,6 +261,10 @@ const getAddressAndKey = async(mnemonic: string): Promise<[string, string]> => {
   return [address, encryptionKey];
 };
 
+const refreshBalance = async(): Promise<void> => {
+  await refreshBalances(chain, [primaryWalletId]);
+};
+
 export default {
   initialize,
   getAddressAndKey,
@@ -269,4 +273,5 @@ export default {
   withdraw,
   bet,
   signRedemption,
+  refreshBalance,
 };
