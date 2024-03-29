@@ -7,7 +7,7 @@ import styles from './index.scss';
 type Props = {
   copyText: string;
   displayText: string;
-  toastText: string;
+  toastText: string | React.ReactNode;
 };
 
 const CopyableText: FunctionComponent<Props> = ({
