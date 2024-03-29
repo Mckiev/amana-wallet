@@ -1,5 +1,5 @@
 import type { FunctionComponent } from 'react';
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import Panel from '../Panel';
 import CopyableText from '../CopyableText';
@@ -12,6 +12,14 @@ const Deposit: FunctionComponent = () => {
   const text4 = ')';
   const primaryAddress = useSelector(getPrimaryAddress) ?? '';
   const shortAddress = useSelector(getShortPrimaryAddress) ?? '0zk...';
+  const onDeposit = useCallback(() => {
+    const depositLink = `https://manifold.markets/TestAmanaBot?tab=payments&a=10&msg=${primaryAddress}`;
+    window.open(
+      depositLink,
+      '_blank',
+      'noreferrer,noopener',
+    );
+  }, [primaryAddress]);
   return (
     <Panel>
       <h2>Deposit to AMANA</h2>
@@ -22,12 +30,8 @@ const Deposit: FunctionComponent = () => {
         <CopyableText copyText={primaryAddress} displayText={shortAddress} toastText="Primary Address copied to clipboard" />
         {text4}
       </p>
-      <p>
-        {' '}
-        <a href={`https://manifold.markets/TestAmanaBot?tab=payments&a=10&msg=${primaryAddress}`} target="_blank" rel="noreferrer noopener"> Procced to Manifold to Deposit </a>
-        {' '}
-      </p>
-      <p>Takes ~ a minute for a transfer to arrive</p>
+      <p>Deposits take approximately one minute to arrive</p>
+      <button type="button" onClick={onDeposit}>Deposit on Manifold</button>
     </Panel>
   );
 };

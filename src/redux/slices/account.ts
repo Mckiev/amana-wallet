@@ -13,6 +13,7 @@ export type AccountState = {
   primaryAddress?: string;
   encryptionKey?: string;
   balance: string;
+  balanceRefreshing: boolean;
   loginState: LoginState;
 };
 
@@ -21,6 +22,7 @@ const initialState: AccountState = {
   primaryAddress: undefined,
   encryptionKey: undefined,
   balance: '0',
+  balanceRefreshing: true,
   loginState: LoginState.Entering,
 };
 
@@ -49,8 +51,12 @@ const accountSlice = createSlice({
     beginConfirmation: (state) => {
       state.loginState = LoginState.Confirming;
     },
+    refreshBalance: (state) => {
+      state.balanceRefreshing = true;
+    },
     updateBalance: (state, action: UpdateBalanceAction) => {
       state.balance = action.payload;
+      state.balanceRefreshing = false;
     },
   },
 });

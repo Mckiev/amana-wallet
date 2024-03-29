@@ -10,7 +10,7 @@ type Props = {
   position: Position;
 };
 
-const ToastMsg = () => (
+const ToastMsg: FunctionComponent = () => (
   <div>
     <p>URL copied to clipboard</p>
     <p><b>We encourage opening in private mode (logged out of manifold)</b></p>
@@ -25,7 +25,11 @@ const PositionDisplay: FunctionComponent<Props> = ({ position }) => {
   return (
     <div className={styles.positionDisplay}>
       <div className={styles.value}>
-        <CopyableText copyText={position.url} displayText={position.url} toastText={<ToastMsg />} />
+        <CopyableText
+          copyText={position.url}
+          displayText={position.url}
+          toastText={<ToastMsg />}
+        />
       </div>
       <div className={styles.value}>
         Prediction:
