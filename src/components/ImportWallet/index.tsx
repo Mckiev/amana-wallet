@@ -14,12 +14,16 @@ const ImportWallet: FunctionComponent = () => {
   }, []);
   const onLogin = useCallback(async() => {
     dispatch(AccountActions.beginImporting());
+    const trimmedMnemonic = mnemonic
+      .trim()
+      .split(/\s+/u)
+      .join(' ');
     const [
       primaryAddress,
       encryptionKey,
-    ] = await railgun.getAddressAndKey(mnemonic);
+    ] = await railgun.getAddressAndKey(trimmedMnemonic);
     dispatch(AccountActions.importAccount({
-      mnemonic,
+      mnemonic: trimmedMnemonic,
       primaryAddress,
       encryptionKey,
     }));
