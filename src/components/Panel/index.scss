@@ -1,3 +1,5 @@
+@use '../App/mixins' as *;
+
 .panel {
   border: 1px solid black;
   border-radius: 0.5em;
@@ -36,8 +38,10 @@
   background-size: 100% 40px, 100% 40px, 100% 24px, 100% 24px;
   background-attachment: local, local, scroll, scroll;
 
-  &:nth-child(5) {
-    grid-column-start: 1;
-    grid-column-end: 3;
+  @include desktop {
+    &:nth-child(5) {
+      grid-column-start: 1;
+      grid-column-end: 3;
+    }
   }
 }
