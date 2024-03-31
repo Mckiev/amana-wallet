@@ -44,6 +44,6 @@ If you discover any vulnerabilities, please report them responsibly, and you wil
 
 ## Contact
 
-For any questions or inquiries, please reach out to the project maintainer at contact@amana.bot or join the [Telegram channel](https://t.me/anonymousmana) for discussions and support.
+For any questions or inquiries, please reach out to the project maintainer at contact@amana.bot or join the [Telegram channel]([https://t.me/anonymousmana](https://t.me/AMANACHAT)) for discussions and support.
 
 Happy anonymous betting!
