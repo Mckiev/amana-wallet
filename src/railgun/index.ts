@@ -114,7 +114,7 @@ const onBalanceUpdateCallback = (
           amount.tokenData.tokenAddress === constants.TOKENS.AMANA
         ));
         if (amanaAmounts.length === 0) {
-          return;
+          continue;
         }
         const memoText = typeof amanaAmounts[0]?.memoText === 'string'
           ? amanaAmounts[0]?.memoText
@@ -137,7 +137,7 @@ const onBalanceUpdateCallback = (
           amount.tokenData.tokenAddress === constants.TOKENS.AMANA
         ));
         if (amanaAmounts.length === 0) {
-          return;
+          continue;
         }
         const memoText = typeof amanaAmounts[0]?.memoText === 'string'
           ? amanaAmounts[0]?.memoText
