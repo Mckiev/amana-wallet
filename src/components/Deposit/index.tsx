@@ -7,13 +7,13 @@ import { getPrimaryAddress, getShortPrimaryAddress } from '../../redux/selectors
 
 const Deposit: FunctionComponent = () => {
   const text1 = 'Send Mana to ';
-  const text2 = 'TestAmanaBot';
+  const text2 = 'AMANABOT';
   const text3 = ' with the message: (';
   const text4 = ')';
   const primaryAddress = useSelector(getPrimaryAddress) ?? '';
   const shortAddress = useSelector(getShortPrimaryAddress) ?? '0zk...';
   const onDeposit = useCallback(() => {
-    const depositLink = `https://manifold.markets/TestAmanaBot?tab=payments&a=10&msg=${primaryAddress}`;
+    const depositLink = `https://manifold.markets/AMANABOT?tab=payments&a=10&msg=${primaryAddress}`;
     window.open(
       depositLink,
       '_blank',

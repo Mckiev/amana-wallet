@@ -60,7 +60,7 @@ const Bet: FunctionComponent = () => {
   return (
     <Panel>
       <h2>Bet</h2>
-      <p>Provide the URL of the BINARY market you want to bet on</p>
+      <p>Provide the URL of the <b>BINARY</b> market you want to bet on</p>
       <label htmlFor="manifoldUrl">Manifold URL</label>
       <input value={marketUrl} onChange={onChangeMarketUrl} type="text" name="manifoldUrl" />
       <p>
