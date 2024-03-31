@@ -12,5 +12,5 @@ export default {
     BOT_ID: '',
     maxWithdrawal: 10000n,
   },
-  RELAYER_HOST: 'api.amana.bot',
+  RELAYER_HOST: 'https://api.amana.bot',
 };
