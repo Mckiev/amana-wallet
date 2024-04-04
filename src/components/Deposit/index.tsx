@@ -8,7 +8,7 @@ import constants from '../../constants';
 
 const Deposit: FunctionComponent = () => {
   const text1 = 'Send Mana to ';
-  const text2 = 'AMANABOT';
+  const text2 = constants.MANIFOLD.BOT_USERNAME;
   const text3 = ' with the message: (';
   const text4 = ')';
   const primaryAddress = useSelector(getPrimaryAddress) ?? '';
