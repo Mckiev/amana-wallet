@@ -9,7 +9,7 @@ export default {
     BOT_ADDRESS: '0zk1qyzfhwxuunjk43uxgguyuf9fux0fzty4hrpxs2g8la07nn5szgnd4rv7j6fe3z53l7zvc0q4f0xxj6sde8vtrgxzzslmm4h7zcmfdyxn60hjg5srldw224lme3u',
   },
   MANIFOLD: {
-    BOT_ID: '',
+    BOT_USERNAME: 'AMANABOT',
     maxWithdrawal: 10000n,
   },
   RELAYER_HOST: 'https://api.amana.bot',
