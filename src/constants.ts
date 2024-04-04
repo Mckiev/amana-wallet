@@ -1,16 +1,16 @@
 export default {
   TOKENS: {
-    AMANA: '0x9064ed5d54e3e0558c523ba163044e1d8c93ce30',
+    AMANA: '0xb7fa2208b49a65f9b9a85956fad7a3f361b248dd',
   },
   CHAINS: {
     POLYGON: 137,
   },
   RAILGUN: {
-    BOT_ADDRESS: '0zk1qyzfhwxuunjk43uxgguyuf9fux0fzty4hrpxs2g8la07nn5szgnd4rv7j6fe3z53l7zvc0q4f0xxj6sde8vtrgxzzslmm4h7zcmfdyxn60hjg5srldw224lme3u',
+    BOT_ADDRESS: '0zk1qy4sjmg5ecz9575f44yr32adshpz2jf4ylgcs20net0j060zmnsx0rv7j6fe3z53llxnety68h4jjhgjc7qpklk598t4lh7rcp95yp70tlmmpnagl6n2cyedj07',
   },
   MANIFOLD: {
-    BOT_ID: '',
+    BOT_USERNAME: 'TestAmanaBot',
     maxWithdrawal: 10000n,
   },
-  RELAYER_HOST: 'https://api.amana.bot',
+  RELAYER_HOST: 'https://test-api.amana.bot',
 };
