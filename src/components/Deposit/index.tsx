@@ -4,6 +4,7 @@ import { useSelector } from 'react-redux';
 import Panel from '../Panel';
 import CopyableText from '../CopyableText';
 import { getPrimaryAddress, getShortPrimaryAddress } from '../../redux/selectors';
+import constants from '../../constants';
 
 const Deposit: FunctionComponent = () => {
   const text1 = 'Send Mana to ';
@@ -13,7 +14,7 @@ const Deposit: FunctionComponent = () => {
   const primaryAddress = useSelector(getPrimaryAddress) ?? '';
   const shortAddress = useSelector(getShortPrimaryAddress) ?? '0zk...';
   const onDeposit = useCallback(() => {
-    const depositLink = `https://manifold.markets/AMANABOT?tab=payments&a=200&msg=${primaryAddress}`;
+    const depositLink = `https://manifold.markets/${constants.MANIFOLD.BOT_USERNAME}?tab=payments&a=200&msg=${primaryAddress}`;
     window.open(
       depositLink,
       '_blank',
