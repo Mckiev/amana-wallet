@@ -22,12 +22,12 @@ const loadEngineProvider = async(): Promise<void> => {
     providers: [
       {
         provider: 'https://rpc.ankr.com/polygon',
-        priority: 1,
+        priority: 2,
         weight: 1,
       },
       {
         provider: 'https://1rpc.io/matic',
-        priority: 2,
+        priority: 1,
         weight: 1,
       },
     ],
